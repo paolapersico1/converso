@@ -82,6 +82,7 @@ FLOWS = {
         "co2signal",
         "coinbase",
         "control4",
+        "converso_assistant",
         "coolmaster",
         "cpuspeed",
         "crownstone",

@@ -225,6 +225,8 @@ build.json @home-assistant/supervisor
 /tests/components/control4/ @lawtancool
 /homeassistant/components/conversation/ @home-assistant/core @synesthesiam
 /tests/components/conversation/ @home-assistant/core @synesthesiam
+/homeassistant/components/converso_assistant/ @paolapersico1
+/tests/components/converso_assistant/ @paolapersico1
 /homeassistant/components/coolmaster/ @OnFreund
 /tests/components/coolmaster/ @OnFreund
 /homeassistant/components/counter/ @fabaff
