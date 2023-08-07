@@ -11,9 +11,10 @@ from data_acquisition import load_synthetic_dataset
 from data_preprocessing import create_datasets
 from data_visualization import (
     plot_confusion_matrices,
-    plot_intent_distribution,
+    plot_distribution,
     plot_testing_accuracy,
 )
+import nltk
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -28,9 +29,9 @@ def set_display_options():
     pd.set_option("display.max_columns", 3000)
 
 
-def print_models_table(models):
+def print_models_table(models, current_label):
     """Log model information."""
-    _LOGGER.info("\nBest models:\n")
+    _LOGGER.info("\nBest models for " + current_label + ":\n")
 
     hyperparams = {}
     table = pd.DataFrame({"Model": models.columns})
@@ -54,6 +55,7 @@ def print_models_table(models):
 
 if __name__ == "__main__":
     set_display_options()
+    nltk.download("stopwords")
 
     show_plots = False
 
@@ -64,36 +66,53 @@ if __name__ == "__main__":
 
     df = load_synthetic_dataset()
 
-    if show_plots:
-        plot_intent_distribution(df["Intent"])
+    labels = (
+        "Intent",
+        "Domain",
+        "Name",
+        "Area",
+        "DeviceClass",
+        "Response",
+        "State",
+    )
 
-    datasets = create_datasets(df)
+    for label in labels:
+        if show_plots:
+            plot_distribution(df[label], label)
 
-    best_models = {}
+        datasets = create_datasets(df, label)
 
-    for dataset_name, dataset_current in datasets.items():
-        _LOGGER.info("Training on " + dataset_name)
+        best_models = {}
 
-        x_current = dataset_current.iloc[:, -300:]
-        y_current = dataset_current["Intent"]
+        for dataset_name, dataset_current in datasets.items():
+            _LOGGER.info("Label: " + label + " - Training on " + dataset_name)
 
-        x_train, x_test, y_train, y_test = train_test_split(
-            x_current, y_current, test_size=0.20, random_state=42, stratify=y_current
-        )
+            x_current = dataset_current.iloc[:, -100:]
+            y_current = dataset_current[label]
 
-        current_bests = generate_best_models(
-            x_train, y_train, x_test, y_test, dataset_name
-        )
-        best_models.update(current_bests)
+            x_train, x_test, y_train, y_test = train_test_split(
+                x_current,
+                y_current,
+                test_size=0.20,
+                random_state=42,
+                stratify=y_current,
+            )
+
+            current_bests = generate_best_models(
+                x_train, y_train, x_test, y_test, dataset_name, label
+            )
+            best_models.update(current_bests)
+
+            if show_plots:
+                plot_confusion_matrices(current_bests, x_test, y_test, n_cols=3)
+
+        pd_models = pd.DataFrame(best_models)
+        print_models_table(pd_models, label)
 
         if show_plots:
-            plot_confusion_matrices(current_bests, x_test, y_test, n_cols=3)
-
-    pd_models = pd.DataFrame(best_models)
-    print_models_table(pd_models)
-
-    if show_plots:
-        models_names = pd.unique([name.split("__")[0] for name in pd_models.columns])
-        plot_testing_accuracy(
-            pd_models.transpose()["final_test_score"], models_names, datasets.keys()
-        )
+            models_names = pd.unique(
+                [name.split("__")[0] for name in pd_models.columns]
+            )
+            plot_testing_accuracy(
+                pd_models.transpose()["final_test_score"], models_names, datasets.keys()
+            )

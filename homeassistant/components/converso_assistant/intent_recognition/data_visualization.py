@@ -6,11 +6,11 @@ import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay
 
 
-def plot_intent_distribution(y):
-    """Plot the intent distribution as a bar plot."""
+def plot_distribution(y, label):
+    """Plot the distribution as a bar plot."""
     plt.figure()
-    pd.value_counts(y).plot.bar(title="Intent distribution")
-    plt.xlabel("Intent")
+    pd.value_counts(y).plot.bar(title=label + " distribution")
+    plt.xlabel(label)
     plt.ylabel("Sentences")
     plt.show()
 

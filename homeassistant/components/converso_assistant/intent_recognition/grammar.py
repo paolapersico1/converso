@@ -39,7 +39,7 @@ def generate_artificial_dataset(dataset_file_path):
     % start S
 
     S -> Intent
-    Intent -> HassTurnOn | HassTurnOff | HassGetState | HassLightSet | HassClimateGetTemperature | HassClimateSetTemperature
+    Intent -> HassTurnOn | HassTurnOff | HassLightSet | HassClimateGetTemperature | HassClimateSetTemperature | HassGetState
     HassTurnOn -> Light_TurnOn | Fan_TurnOn | Cover_Open | Entity_TurnOn
     HassTurnOff -> Light_TurnOff | Fan_TurnOff | Cover_Close | Entity_TurnOff
     HassGetState -> Cover_Get | Entity_Get
@@ -160,7 +160,8 @@ def generate_artificial_dataset(dataset_file_path):
 
     Entity_Get -> One | One_YesNo | Any | All | Which | How_Many
 
-    One -> 'Qual è lo stato' Of[NUM=?n, GEN=?g, ART=?a] Name
+    One ->  CanYouTell OneQuestion | OneQuestion
+    OneQuestion -> 'qual è lo stato' Of[NUM=?n, GEN=?g, ART=?a] Name | 'qual è il valore' Of[NUM=?n, GEN=?g, ART=?a] Name
 
     One_YesNo -> TellIf OneYesNoQuestion | OneYesNoQuestion
     OneYesNoQuestion -> EntitySubject[NUM=?n, GEN=?n, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]

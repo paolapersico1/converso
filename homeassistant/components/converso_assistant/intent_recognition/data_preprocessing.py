@@ -3,21 +3,20 @@ import logging
 import os
 from os import path
 
+from consts import (
+    DATASETS_DIR,
+    USE_SAVED_DATASETS,
+)
 import nltk
 from nltk.corpus import stopwords
 import numpy as np
 import pandas as pd
-
-from .consts import (
-    DATASETS_DIR,
-    USE_SAVED_DATASETS,
-)
-from .word2vec.word2vec_training import get_word2vec_model, w2v
+from word2vec.word2vec_training import get_word2vec_model, w2v
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def create_datasets(df):
+def create_datasets(df, label):
     """Create word2vec datasets (with and without stopwords)."""
     new_df = df.copy()
     new_df_without_sw = df.copy()
@@ -29,26 +28,26 @@ def create_datasets(df):
     new_df_without_sw["Text"] = new_df_without_sw["Text"].astype("string")
     new_df_without_sw.drop_duplicates()
 
-    new_df = balance_dataset(new_df)
-    new_df_without_sw = balance_dataset(new_df_without_sw)
+    new_df = balance_dataset(new_df, label)
+    new_df_without_sw = balance_dataset(new_df_without_sw, label)
 
     x_subsets = {
         "without_sw_removal": get_word2vec_dataset(
             new_df,
-            path.join(DATASETS_DIR, "without_sw_removal.csv"),
+            path.join(DATASETS_DIR, label + "_without_sw_removal.csv"),
         ),
         "with_sw_removal": get_word2vec_dataset(
             new_df_without_sw,
-            path.join(DATASETS_DIR, "with_sw_removal.csv"),
+            path.join(DATASETS_DIR, label + "_with_sw_removal.csv"),
         ),
     }
 
     return x_subsets
 
 
-def balance_dataset(df):
-    """Balance dataset in respect to Intent."""
-    g = df.groupby("Intent")
+def balance_dataset(df, label):
+    """Balance dataset in respect to label."""
+    g = df.groupby(label)
     df = g.apply(lambda x: x.sample(g.size().min())).reset_index(drop=True)
     return df
 
@@ -63,7 +62,6 @@ def preprocess_text(line):
 
 def remove_stopwords(series):
     """Remove stopwords."""
-    nltk.download("stopwords")
     italian_stopwords = stopwords.words("italian")
 
     series_without_sw = series.apply(
@@ -86,7 +84,7 @@ def get_word2vec_dataset(df, filepath):
                 [w2v(w2v_model, token) for token in line], axis=0
             ).tolist()
         )
-        text_cols = ["v_" + str(i) for i in range(300)]
+        text_cols = ["v_" + str(i) for i in range(100)]
         df[text_cols] = list(df["Text"].values)
         df = df.drop(columns=["Text"])
         df.to_csv(filepath)
