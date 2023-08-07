@@ -55,7 +55,6 @@ from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
 from .recognition import LightRecognizeResult, smart_recognize_all
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
-
 _LOGGER = logging.getLogger(__name__)
 _DEFAULT_ERROR_TEXT = "Sorry, I couldn't understand that"
 _ENTITY_REGISTRY_UPDATE_FIELDS = ["aliases", "name", "original_name"]
@@ -243,7 +242,6 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self, user_input: agent.ConversationInput
     ) -> agent.ConversationResult:
         """Process a sentence."""
-
         if trigger_result := await self._match_triggers(user_input.text):
             return trigger_result
 
