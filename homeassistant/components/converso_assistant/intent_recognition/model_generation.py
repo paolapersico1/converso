@@ -67,13 +67,13 @@ if __name__ == "__main__":
     df = load_synthetic_dataset()
 
     labels = (
-        "Intent",
-        "Domain",
-        "Name",
-        "Area",
         "DeviceClass",
-        "Response",
+        "Domain",
         "State",
+        "Name",
+        "Intent",
+        "Area",
+        "Response",
     )
 
     for label in labels:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         best_models = {}
 
         for dataset_name, dataset_current in datasets.items():
-            _LOGGER.info("Label: " + label + " - Training on " + dataset_name)
+            _LOGGER.info("\nLabel: " + label + " - Training on " + dataset_name + "\n")
 
             x_current = dataset_current.iloc[:, -100:]
             y_current = dataset_current[label]
