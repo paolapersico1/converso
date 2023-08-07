@@ -2,13 +2,12 @@
 import os
 from os import path
 
-import pandas as pd
-
-from .consts import (
+from consts import (
     DATASETS_DIR,
     USE_SAVED_GRAMMAR,
 )
-from .grammar import generate_artificial_dataset
+from grammar import generate_artificial_dataset
+import pandas as pd
 
 
 # function to load the dataset

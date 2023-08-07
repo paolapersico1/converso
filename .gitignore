@@ -10,8 +10,8 @@ data/
 
 # Translations
 homeassistant/components/*/translations
-homeassistant/components/converso/intent_recognition/trained_models
-homeassistant/components/converso/intent_recognition/word2vec/cc.it.100.bin
+homeassistant/components/converso_assistant/intent_recognition/trained_models
+homeassistant/components/converso_assistant/intent_recognition/word2vec/cc.it.100.bin
 
 # Hide sublime text stuff
 *.sublime-project
