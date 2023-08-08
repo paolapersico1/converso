@@ -9,6 +9,7 @@ from classifiers import (
 from consts import (
     MODELS_DIR,
     SAVE_MODELS,
+    SLOTS,
     USE_SAVED_MODELS,
 )
 from joblib import dump, load
@@ -18,15 +19,26 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 
+def load_and_predict(X, model_name):
+    """Load model and predict output."""
+    result = {}
+    model_file_path, model_file_info = get_models_metadata(model_name, "Intent")
+    model = load(model_file_path)
+    result["Intent"] = model.predict(X)[0]
+    for slot in SLOTS[result["Intent"]]:
+        model_file_path, model_file_info = get_models_metadata(model_name, slot)
+        model = load(model_file_path)
+        result[slot] = model.predict(X)[0]
+    return result
+
+
 def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
     """Load or generate the best models."""
     best_models = {}
 
     for clf_name, model, params in classifiers:
         model_name = clf_name + "__" + dataset_name
-        model_file_path, model_info_file_path = get_models_metadata(
-            MODELS_DIR, model_name, label
-        )
+        model_file_path, model_info_file_path = get_models_metadata(model_name, label)
 
         best_models[model_name] = {}
 
@@ -69,17 +81,17 @@ def grid_search(x_trainval, y_trainval, clf, params):
     pipeline = Pipeline([("scaler", StandardScaler()), ("clf", clf)])
 
     gs = GridSearchCV(
-        pipeline, params, cv=5, n_jobs=16, return_train_score=True, verbose=3
+        pipeline, params, cv=4, n_jobs=4, return_train_score=True, verbose=3
     )
     gs.fit(x_trainval, y_trainval)
 
     return pd.DataFrame(gs.cv_results_), gs.best_estimator_
 
 
-def get_models_metadata(models_dir, model_name, label):
+def get_models_metadata(model_name, label):
     """Return model metadata."""
     model_file_name = model_name + "_" + label + ".joblib"
-    model_file_path = path.join(models_dir, model_file_name)
-    model_info_file_path = path.join(models_dir, model_name + "_" + label + ".csv")
+    model_file_path = path.join(MODELS_DIR, model_file_name)
+    model_info_file_path = path.join(MODELS_DIR, model_name + "_" + label + ".csv")
 
     return model_file_path, model_info_file_path

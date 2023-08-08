@@ -12,6 +12,9 @@ from hassil.intents import (
 
 from homeassistant.core import HomeAssistant
 
+from .intent_recognition.classification import load_and_predict
+from .intent_recognition.data_preprocessing import full_text_preprocess
+
 
 @dataclass
 class MatchEntity:
@@ -41,16 +44,13 @@ class LightRecognizeResult:
     """Key for intent response."""
 
 
-def smart_intent_recognition(text: str):
-    """Perform the Intent Recognition with AI."""
-    intent_name = "HassGetState"
-    domain = "light"
-    area = "all"
-    state = "none"
-    response = "one_yesno"
-    device_class = None
+def smart_intent_recognition(text: str, w2v_model):
+    """Perform the Intent Recognition task with AI."""
 
-    return intent_name, domain, area, device_class, state, response
+    X = full_text_preprocess(w2v_model, text)
+    result = load_and_predict(X, "svc_linear__without_sw_removal")
+
+    return result
 
 
 def recognize_slot(
@@ -78,38 +78,39 @@ def smart_recognize_all(
     text: str,
     intents: Intents,
     hass: HomeAssistant,
+    w2v_model: Any,
     slot_lists: Optional[dict[str, TextSlotList]] = None,
 ):
     """Recognize the intent and fills the slots."""
-    intent_name, domain, area, device_class, state, response = smart_intent_recognition(
-        text
-    )
+    result = smart_intent_recognition(text, w2v_model)
 
     maybe_matched_entities: list[MatchEntity] = []
 
-    entity_name = recognize_slot("name", text, slot_lists)
-    if entity_name is None:
-        entity_name = "all"
+    name = "all"
+    if result["Name"] != "none":
+        name = recognize_slot("name", text, slot_lists)
 
-    maybe_matched_entities.append(MatchEntity(name="name", value=entity_name))
+    maybe_matched_entities.append(MatchEntity(name="name", value=name))
 
-    if area != "none":
+    if result["Area"] != "none":
         area = recognize_slot("area", text, slot_lists)
         if area:
             maybe_matched_entities.append(MatchEntity(name="area", value=area))
 
-    if domain != "none":
-        maybe_matched_entities.append(MatchEntity(name="domain", value=domain))
-    if device_class != "none":
+    if result["Domain"] != "none":
         maybe_matched_entities.append(
-            MatchEntity(name="device_class", value=device_class)
+            MatchEntity(name="domain", value=result["Domain"])
         )
-    if state != "none":
-        maybe_matched_entities.append(MatchEntity(name="state", value=state))
+    if result["DeviceClass"] != "none":
+        maybe_matched_entities.append(
+            MatchEntity(name="device_class", value=result["DeviceClass"])
+        )
+    if result["State"] != "none":
+        maybe_matched_entities.append(MatchEntity(name="state", value=result["State"]))
 
     return LightRecognizeResult(
-        intent_name=intent_name,
+        intent_name=result["Intent"],
         entities={entity.name: entity for entity in maybe_matched_entities},
         entities_list=maybe_matched_entities,
-        response=response,
+        response=result["Response"],
     )

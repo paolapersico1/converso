@@ -6,7 +6,9 @@ from consts import (
     DATASETS_DIR,
     USE_SAVED_GRAMMAR,
 )
-from grammar import generate_artificial_dataset
+from grammar import (
+    generate_artificial_dataset,
+)
 import pandas as pd
 
 
@@ -17,6 +19,7 @@ def load_synthetic_dataset():
 
     if USE_SAVED_GRAMMAR and os.access(dataset_file_path, os.R_OK):
         df = pd.read_csv(dataset_file_path, index_col=0)
+        df.reset_index(drop=True, inplace=True)
     else:
         df = generate_artificial_dataset(dataset_file_path)
 

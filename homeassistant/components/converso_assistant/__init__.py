@@ -52,6 +52,7 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
+from .intent_recognition.word2vec.word2vec_training import get_word2vec_model
 from .recognition import LightRecognizeResult, smart_recognize_all
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
@@ -166,7 +167,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self._trigger_sentences: list[TriggerData] = []
         self._trigger_intents: Intents | None = None
 
-        # self.model = get_word2vec_model()
+        self.model = get_word2vec_model()
         # self.vocab = w2v_words(self.model)
         # self.speech_corrector = SpeechCorrector(self.vocab)
         # slot_lists = self._make_slot_lists()
@@ -326,7 +327,11 @@ class ConversoAgent(agent.AbstractConversationAgent):
         maybe_result: LightRecognizeResult | None = None
 
         maybe_result = smart_recognize_all(
-            user_input.text, lang_intents.intents, self.hass, slot_lists=slot_lists
+            user_input.text,
+            lang_intents.intents,
+            self.hass,
+            self.model,
+            slot_lists=slot_lists,
         )
 
         return maybe_result

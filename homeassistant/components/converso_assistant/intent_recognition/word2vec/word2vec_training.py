@@ -10,11 +10,12 @@ import pandas as pd
 
 W2V_DIR = Path(__file__).parent
 _LOGGER = logging.getLogger(__name__)
+W2V_DIM = 100
 
 
 def get_word2vec_model(use_saved=True, save_models=True):
     """Load or create a word2vec model."""
-    word2vec_model_file = path.join(W2V_DIR, "cc.it.100.bin")
+    word2vec_model_file = path.join(W2V_DIR, "cc.it." + str(W2V_DIM) + ".bin")
     if use_saved and os.access(word2vec_model_file, os.R_OK):
         _LOGGER.info("Fetching word2vec model")
         # load the model
@@ -22,7 +23,7 @@ def get_word2vec_model(use_saved=True, save_models=True):
         # w2v_model = Word2Vec.load(word2vec_model_file)
     else:
         _LOGGER.info("Creating word2vec model")
-        size = 300  # dim of word vectors
+        size = W2V_DIM  # dim of word vectors
         window = 5  # context window
         min_count = 1  # do not ignore words with low frequency
         workers = 16  # training threads

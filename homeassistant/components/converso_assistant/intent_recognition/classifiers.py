@@ -7,17 +7,17 @@ from sklearn.svm import SVC
 classifiers = [
     (
         "svc_linear",
-        SVC(kernel="linear", probability=True),
+        SVC(kernel="linear", max_iter=100000),
         {"clf__C": [0.1, 1, 10]},
     ),
     (
         "svc_poly",
-        SVC(kernel="poly", probability=True),
+        SVC(kernel="poly", max_iter=100000),
         {"clf__C": [0.1, 1, 10], "clf__degree": [2, 3]},
     ),
     (
         "svc_rbf",
-        SVC(kernel="rbf", probability=True),
+        SVC(kernel="rbf", max_iter=100000),
         {
             "clf__C": [0.1, 1, 10],
             "clf__gamma": np.logspace(-2, 2, 3, dtype=np.float32),
