@@ -12733,12 +12733,6 @@
 12819,dimmi se custom_name è spento,HassGetState,none,custom_name,none,none,one_yesno,off
 12820,dimmi se custom_name è accesa,HassGetState,none,custom_name,none,none,one_yesno,on
 12821,dimmi se custom_name è acceso,HassGetState,none,custom_name,none,none,one_yesno,on
-12822,Qual è lo stato delle custom_name,HassGetState,none,custom_name,none,none,one,none
-12823,Qual è lo stato degli custom_name,HassGetState,none,custom_name,none,none,one,none
-12824,Qual è lo stato dei custom_name,HassGetState,none,custom_name,none,none,one,none
-12825,Qual è lo stato della custom_name,HassGetState,none,custom_name,none,none,one,none
-12826,Qual è lo stato dello custom_name,HassGetState,none,custom_name,none,none,one,none
-12827,Qual è lo stato del custom_name,HassGetState,none,custom_name,none,none,one,none
 12828,quante finestre sono chiuse nella custom_area,HassGetState,cover,none,custom_area,Window,how_many,off
 12829,quante finestre sono chiuse nello custom_area,HassGetState,cover,none,custom_area,Window,how_many,off
 12830,quante finestre sono chiuse nel custom_area,HassGetState,cover,none,custom_area,Window,how_many,off
@@ -21259,3 +21253,39 @@
 21345,accendi le luci,HassTurnOn,light,none,none,none,default,none
 21346,accendi la lampada,HassTurnOn,light,none,none,none,default,none
 21347,accendi la luce,HassTurnOn,light,none,none,none,default,none
+30000,qual è il valore delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30001,qual è il valore degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30002,qual è il valore dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30003,qual è il valore della custom_name,HassGetState,none,custom_name,none,none,one,none
+30004,qual è il valore dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30005,qual è il valore del custom_name,HassGetState,none,custom_name,none,none,one,none
+30006,qual è lo stato delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30007,qual è lo stato degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30008,qual è lo stato dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30009,qual è lo stato della custom_name,HassGetState,none,custom_name,none,none,one,none
+30010,qual è lo stato dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30011,qual è lo stato del custom_name,HassGetState,none,custom_name,none,none,one,none
+30012,puoi dirmi qual è il valore delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30013,puoi dirmi qual è il valore degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30014,puoi dirmi qual è il valore dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30015,puoi dirmi qual è il valore della custom_name,HassGetState,none,custom_name,none,none,one,none
+30016,puoi dirmi qual è il valore dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30017,puoi dirmi qual è il valore del custom_name,HassGetState,none,custom_name,none,none,one,none
+30018,puoi dirmi qual è lo stato delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30019,puoi dirmi qual è lo stato degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30020,puoi dirmi qual è lo stato dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30021,puoi dirmi qual è lo stato della custom_name,HassGetState,none,custom_name,none,none,one,none
+30022,puoi dirmi qual è lo stato dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30023,puoi dirmi qual è lo stato del custom_name,HassGetState,none,custom_name,none,none,one,none
+30024,dimmi qual è il valore delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30025,dimmi qual è il valore degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30026,dimmi qual è il valore dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30027,dimmi qual è il valore della custom_name,HassGetState,none,custom_name,none,none,one,none
+30028,dimmi qual è il valore dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30029,dimmi qual è il valore del custom_name,HassGetState,none,custom_name,none,none,one,none
+30030,dimmi qual è lo stato delle custom_name,HassGetState,none,custom_name,none,none,one,none
+30031,dimmi qual è lo stato degli custom_name,HassGetState,none,custom_name,none,none,one,none
+30032,dimmi qual è lo stato dei custom_name,HassGetState,none,custom_name,none,none,one,none
+30033,dimmi qual è lo stato della custom_name,HassGetState,none,custom_name,none,none,one,none
+30034,dimmi qual è lo stato dello custom_name,HassGetState,none,custom_name,none,none,one,none
+30035,dimmi qual è lo stato del custom_name,HassGetState,none,custom_name,none,none,one,none

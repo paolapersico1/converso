@@ -2,30 +2,25 @@
 import logging
 from os import makedirs, path
 
-from classification import (
-    generate_best_models,
-)
-from consts import (
+import nltk
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from .classification import generate_best_models
+from .consts import (
     DATASETS_DIR,
     MODELS_DIR,
 )
-from data_acquisition import (
+from .data_acquisition import (
     load_synthetic_dataset,
 )
-from data_preprocessing import (
-    create_datasets,
-)
-from data_visualization import (
+from .data_preprocessing import create_datasets
+from .data_visualization import (
     plot_confusion_matrices,
     plot_distribution,
     plot_testing_accuracy,
 )
-import nltk
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from word2vec.word2vec_training import (
-    W2V_DIM,
-)
+from .word2vec.word2vec_training import W2V_DIM
 
 _LOGGER = logging.getLogger(__name__)
 

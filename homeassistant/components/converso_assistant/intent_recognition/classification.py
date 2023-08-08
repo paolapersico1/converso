@@ -3,31 +3,32 @@
 import os
 from os import path
 
-from classifiers import (
+import pandas as pd
+from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+import skops.io as sio
+
+from .classifiers import (
     classifiers,
 )
-from consts import (
+from .consts import (
     MODELS_DIR,
     SAVE_MODELS,
     SLOTS,
     USE_SAVED_MODELS,
 )
-from joblib import dump, load
-import pandas as pd
-from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 
 def load_and_predict(X, model_name):
     """Load model and predict output."""
     result = {}
     model_file_path, model_file_info = get_models_metadata(model_name, "Intent")
-    model = load(model_file_path)
+    model = sio.load(model_file_path, trusted=True)
     result["Intent"] = model.predict(X)[0]
     for slot in SLOTS[result["Intent"]]:
         model_file_path, model_file_info = get_models_metadata(model_name, slot)
-        model = load(model_file_path)
+        model = sio.load(model_file_path, trusted=True)
         result[slot] = model.predict(X)[0]
     return result
 
@@ -47,7 +48,7 @@ def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
             and os.access(model_file_path, os.R_OK)
             and os.access(model_info_file_path, os.R_OK)
         ):
-            best_models[model_name]["model"] = load(model_file_path)
+            best_models[model_name]["model"] = sio.load(model_file_path, trusted=True)
             result = pd.read_csv(model_info_file_path)
         else:
             # cross-validate
@@ -55,7 +56,7 @@ def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
             best_models[model_name]["model"] = current_model
             if SAVE_MODELS:
                 # save the model
-                dump(current_model, model_file_path)
+                sio.dump(current_model, model_file_path)
                 result.to_csv(model_info_file_path)
 
         attributes = [
@@ -90,8 +91,8 @@ def grid_search(x_trainval, y_trainval, clf, params):
 
 def get_models_metadata(model_name, label):
     """Return model metadata."""
-    model_file_name = model_name + "_" + label + ".joblib"
-    model_file_path = path.join(MODELS_DIR, model_file_name)
-    model_info_file_path = path.join(MODELS_DIR, model_name + "_" + label + ".csv")
+    model_file_name = label + "__" + model_name
+    model_file_path = path.join(MODELS_DIR, model_file_name + ".skops")
+    model_info_file_path = path.join(MODELS_DIR, model_file_name + ".csv")
 
     return model_file_path, model_info_file_path

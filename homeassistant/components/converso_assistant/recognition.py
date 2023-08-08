@@ -1,5 +1,6 @@
 """Module to perform the Intent Recognition task."""
 from dataclasses import dataclass, field
+import logging
 from typing import Any, Optional
 
 from hassil.expression import (
@@ -14,6 +15,8 @@ from homeassistant.core import HomeAssistant
 
 from .intent_recognition.classification import load_and_predict
 from .intent_recognition.data_preprocessing import full_text_preprocess
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -83,6 +86,7 @@ def smart_recognize_all(
 ):
     """Recognize the intent and fills the slots."""
     result = smart_intent_recognition(text, w2v_model)
+    _LOGGER.debug(result)
 
     maybe_matched_entities: list[MatchEntity] = []
 
@@ -92,25 +96,27 @@ def smart_recognize_all(
 
     maybe_matched_entities.append(MatchEntity(name="name", value=name))
 
-    if result["Area"] != "none":
+    if result.get("Area", "none") != "none":
         area = recognize_slot("area", text, slot_lists)
         if area:
             maybe_matched_entities.append(MatchEntity(name="area", value=area))
 
-    if result["Domain"] != "none":
+    if result.get("Domain", "none") != "none":
         maybe_matched_entities.append(
             MatchEntity(name="domain", value=result["Domain"])
         )
-    if result["DeviceClass"] != "none":
+    if result.get("DeviceClass", "none") != "none":
         maybe_matched_entities.append(
             MatchEntity(name="device_class", value=result["DeviceClass"])
         )
-    if result["State"] != "none":
+    if result.get("State", "none") != "none":
         maybe_matched_entities.append(MatchEntity(name="state", value=result["State"]))
+
+    response = result.get("Response", "default")
 
     return LightRecognizeResult(
         intent_name=result["Intent"],
         entities={entity.name: entity for entity in maybe_matched_entities},
         entities_list=maybe_matched_entities,
-        response=result["Response"],
+        response=response,
     )
