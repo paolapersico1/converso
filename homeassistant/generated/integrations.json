@@ -913,6 +913,12 @@
       "config_flow": true,
       "iot_class": "local_polling"
     },
+    "converso_assistant": {
+      "name": "Converso Assistant",
+      "integration_type": "hub",
+      "config_flow": true,
+      "iot_class": "local_push"
+    },
     "coolmaster": {
       "name": "CoolMasterNet",
       "integration_type": "hub",

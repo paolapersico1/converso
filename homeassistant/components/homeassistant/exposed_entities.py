@@ -20,7 +20,12 @@ from homeassistant.helpers.storage import Store
 
 from .const import DATA_EXPOSED_ENTITIES, DOMAIN
 
-KNOWN_ASSISTANTS = ("cloud.alexa", "cloud.google_assistant", "conversation")
+KNOWN_ASSISTANTS = (
+    "cloud.alexa",
+    "cloud.google_assistant",
+    "conversation",
+    "converso_assistant",
+)
 
 STORAGE_KEY = f"{DOMAIN}.exposed_entities"
 STORAGE_VERSION = 1
@@ -62,9 +67,7 @@ DEFAULT_EXPOSED_SENSOR_DEVICE_CLASSES = {
     SensorDeviceClass.VOLATILE_ORGANIC_COMPOUNDS,
 }
 
-DEFAULT_EXPOSED_ASSISTANT = {
-    "conversation": True,
-}
+DEFAULT_EXPOSED_ASSISTANT = {"conversation": True, "converso_assistant": True}
 
 
 @dataclasses.dataclass(frozen=True)
