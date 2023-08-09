@@ -39,10 +39,10 @@ def generate_artificial_dataset(dataset_file_path):
     % start S
 
     S -> Intent
-    Intent -> HassGetState
+    Intent -> HassTurnOn | HassTurnOff | HassLightSet | HassClimateGetTemperature | HassClimateSetTemperature | HassGetState
     HassTurnOn -> Light_TurnOn | Fan_TurnOn | Cover_Open | Entity_TurnOn
     HassTurnOff -> Light_TurnOff | Fan_TurnOff | Cover_Close | Entity_TurnOff
-    HassGetState -> Entity_Get
+    HassGetState -> Cover_Get | Entity_Get
     HassLightSet -> Light_SetBrightness | Light_SetColor
     HassClimateGetTemperature -> Climate_Get
     HassClimateSetTemperature -> Climate_Set

@@ -12,7 +12,7 @@ SAVE_MODELS = True
 SLOTS = {
     "HassTurnOn": ("Name", "Domain", "Area", "DeviceClass"),
     "HassTurnOff": ("Name", "Domain", "Area", "DeviceClass"),
-    "HassGetState": ("Name", "Domain", "Area", "DeviceClass", "State", "Response"),
+    "HassGetState": ("Name", "Domain", "Area", "DeviceClass", "Response", "State"),
     "HassLightSet": ("Name", "Area", "Response"),
     "HassClimateGetTemperature": ("Area",),
     "HassClimateSetTemperature": ("Area",),

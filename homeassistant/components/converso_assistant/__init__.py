@@ -146,6 +146,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_setup(hass: core.HomeAssistant, config: ConfigType) -> bool:
     """Converso agent setup."""
+    # await hass.async_add_executor_job(pipeline())
     return True
 
 
@@ -170,9 +171,6 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self.model = get_word2vec_model()
         # self.vocab = w2v_words(self.model)
         # self.speech_corrector = SpeechCorrector(self.vocab)
-        # slot_lists = self._make_slot_lists()
-        # print(recognize_area("Accendi luce in bagno", self.hass))
-        # print(recognize_name("Accendi luce bagno", slot_lists))
 
     @property
     def supported_languages(self) -> list[str]:

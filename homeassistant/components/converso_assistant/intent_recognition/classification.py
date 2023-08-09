@@ -27,9 +27,12 @@ def load_and_predict(X, model_name):
     model = sio.load(model_file_path, trusted=True)
     result["Intent"] = model.predict(X)[0]
     for slot in SLOTS[result["Intent"]]:
-        model_file_path, model_file_info = get_models_metadata(model_name, slot)
-        model = sio.load(model_file_path, trusted=True)
-        result[slot] = model.predict(X)[0]
+        if not (slot == "Response" and result["State"] == "one") and not (
+            slot == "DeviceClass" and result["Domain"] != "cover"
+        ):
+            model_file_path, model_file_info = get_models_metadata(model_name, slot)
+            model = sio.load(model_file_path, trusted=True)
+            result[slot] = model.predict(X)[0]
     return result
 
 

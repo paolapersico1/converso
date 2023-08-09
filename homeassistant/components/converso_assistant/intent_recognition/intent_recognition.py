@@ -2,7 +2,6 @@
 import logging
 from os import makedirs, path
 
-import nltk
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -59,9 +58,10 @@ def print_models_table(models, current_label):
     # print(table)
 
 
-if __name__ == "__main__":
+def pipeline():
+    """Generate Intent Recognition models."""
     set_display_options()
-    nltk.download("stopwords")
+    # nltk.download("stopwords")
 
     show_plots = False
 

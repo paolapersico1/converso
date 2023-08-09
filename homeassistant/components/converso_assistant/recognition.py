@@ -51,7 +51,7 @@ def smart_intent_recognition(text: str, w2v_model):
     """Perform the Intent Recognition task with AI."""
 
     X = full_text_preprocess(w2v_model, text)
-    result = load_and_predict(X, "svc_linear__without_sw_removal")
+    result = load_and_predict(X, "svc_rbf__without_sw_removal")
 
     return result
 
@@ -72,8 +72,8 @@ def recognize_slot(
     for item in slot_values:
         if isinstance(item, TextChunk):
             chunk: TextChunk = item
-        if chunk.text.lower() in input_text:
-            return item
+            if chunk.text.lower() in input_text:
+                return chunk.text
     return None
 
 
@@ -91,7 +91,7 @@ def smart_recognize_all(
     maybe_matched_entities: list[MatchEntity] = []
 
     name = "all"
-    if result["Name"] != "none":
+    if result.get("Name", "none") != "none":
         name = recognize_slot("name", text, slot_lists)
 
     maybe_matched_entities.append(MatchEntity(name="name", value=name))

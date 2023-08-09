@@ -27,8 +27,10 @@ def create_datasets(df, label):
     new_df = df.copy()
     if label != "Intent":
         for index, row in new_df.iterrows():
-            if (label not in SLOTS[row["Intent"]]) or (
-                label == "State" and row["Response"] == "one"
+            if (
+                (label not in SLOTS[row["Intent"]])
+                or (label == "State" and row["Response"] == "one")
+                or (label == "DeviceClass" and row["Domain"] != "cover")
             ):
                 new_df.drop(index, inplace=True)
     new_df_without_sw = new_df.copy()
