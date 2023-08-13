@@ -1,5 +1,6 @@
 """Module to perform the classification task."""
 
+import logging
 import os
 from os import path
 
@@ -9,15 +10,15 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import skops.io as sio
 
-from .classifiers import (
-    classifiers,
-)
-from .consts import (
+from .const import (
     MODELS_DIR,
     SAVE_MODELS,
     SLOTS,
     USE_SAVED_MODELS,
 )
+from .models import classifiers, regressors
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def load_and_predict(X, model_name):
@@ -27,7 +28,7 @@ def load_and_predict(X, model_name):
     model = sio.load(model_file_path, trusted=True)
     result["Intent"] = model.predict(X)[0]
     for slot in SLOTS[result["Intent"]]:
-        if not (slot == "Response" and result["State"] == "one") and not (
+        if not (slot == "Response" and result.get("State", "") == "one") and not (
             slot == "DeviceClass" and result["Domain"] != "cover"
         ):
             model_file_path, model_file_info = get_models_metadata(model_name, slot)
@@ -40,7 +41,13 @@ def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
     """Load or generate the best models."""
     best_models = {}
 
-    for clf_name, model, params in classifiers:
+    models = []
+    if label not in ("Brightness", "Temperature"):
+        models = classifiers
+    else:
+        models = regressors
+
+    for clf_name, model, params in models:
         model_name = clf_name + "__" + dataset_name
         model_file_path, model_info_file_path = get_models_metadata(model_name, label)
 

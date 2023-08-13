@@ -169,6 +169,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self._trigger_intents: Intents | None = None
 
         self.model = get_word2vec_model()
+        # pipeline()
         # self.vocab = w2v_words(self.model)
         # self.speech_corrector = SpeechCorrector(self.vocab)
 
@@ -207,7 +208,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
 
     async def async_recognize(
         self, user_input: agent.ConversationInput
-    ) -> LightRecognizeResult | None:
+    ) -> list[LightRecognizeResult] | None:
         """Recognize intent from user input."""
         language = user_input.language or self.hass.config.language
         lang_intents = self._lang_intents.get(language)
@@ -247,10 +248,10 @@ class ConversoAgent(agent.AbstractConversationAgent):
         language = user_input.language or self.hass.config.language
         conversation_id = None  # Not supported
 
-        result = await self.async_recognize(user_input)
+        results = await self.async_recognize(user_input)
         lang_intents = self._lang_intents.get(language)
 
-        if result is None:
+        if results is None:
             _LOGGER.debug("No intent was matched for '%s'", user_input.text)
             return _make_error_result(
                 language,
@@ -263,52 +264,56 @@ class ConversoAgent(agent.AbstractConversationAgent):
         # loaded in async_recognize.
         assert lang_intents is not None
 
-        try:
-            intent_response = await intent.async_handle(
-                self.hass,
-                DOMAIN,
-                result.intent_name,
-                {
-                    entity.name: {"value": entity.value}
-                    for entity in result.entities_list
-                },
-                user_input.text,
-                user_input.context,
-                language,
-                assistant=DOMAIN,
-            )
-        except intent.IntentHandleError:
-            _LOGGER.exception("Intent handling error")
-            return _make_error_result(
-                language,
-                intent.IntentResponseErrorCode.FAILED_TO_HANDLE,
-                self._get_error_text(ResponseType.HANDLE_ERROR, lang_intents),
-                conversation_id,
-            )
-        except intent.IntentUnexpectedError:
-            _LOGGER.exception("Unexpected intent error")
-            return _make_error_result(
-                language,
-                intent.IntentResponseErrorCode.UNKNOWN,
-                self._get_error_text(ResponseType.HANDLE_ERROR, lang_intents),
-                conversation_id,
-            )
-
-        if (
-            (not intent_response.speech)
-            and (intent_response.intent is not None)
-            and (response_key := result.response)
-        ):
-            # Use response template, if available
-            response_template_str = lang_intents.intent_responses.get(
-                result.intent_name, {}
-            ).get(response_key)
-            if response_template_str:
-                response_template = template.Template(response_template_str, self.hass)
-                speech = await self._build_speech(
-                    language, response_template, intent_response, result
+        for result in results:
+            try:
+                intent_response = await intent.async_handle(
+                    self.hass,
+                    DOMAIN,
+                    result.intent_name,
+                    {
+                        entity.name: {"value": entity.value}
+                        for entity in result.entities_list
+                    },
+                    user_input.text,
+                    user_input.context,
+                    language,
+                    assistant=DOMAIN,
                 )
-                intent_response.async_set_speech(speech)
+            except intent.IntentHandleError:
+                _LOGGER.exception("Intent handling error")
+                return _make_error_result(
+                    language,
+                    intent.IntentResponseErrorCode.FAILED_TO_HANDLE,
+                    self._get_error_text(ResponseType.HANDLE_ERROR, lang_intents),
+                    conversation_id,
+                )
+            except intent.IntentUnexpectedError:
+                _LOGGER.exception("Unexpected intent error")
+                return _make_error_result(
+                    language,
+                    intent.IntentResponseErrorCode.UNKNOWN,
+                    self._get_error_text(ResponseType.HANDLE_ERROR, lang_intents),
+                    conversation_id,
+                )
+
+            if (
+                (not intent_response.speech)
+                and (intent_response.intent is not None)
+                and (response_key := result.response)
+            ):
+                # Use response template, if available
+
+                response_template_str = lang_intents.intent_responses.get(
+                    result.intent_name, {}
+                ).get(response_key)
+                if response_template_str:
+                    response_template = template.Template(
+                        response_template_str, self.hass
+                    )
+                    speech = await self._build_speech(
+                        language, response_template, intent_response, result
+                    )
+                    intent_response.async_set_speech(speech)
 
         return agent.ConversationResult(
             response=intent_response, conversation_id=conversation_id
@@ -319,10 +324,10 @@ class ConversoAgent(agent.AbstractConversationAgent):
         user_input: agent.ConversationInput,
         lang_intents: LanguageIntents,
         slot_lists: dict[str, TextSlotList],
-    ) -> LightRecognizeResult | None:
+    ) -> list[LightRecognizeResult] | None:
         """Search intents for a match to user input."""
         # Prioritize matches with entity names above area names
-        maybe_result: LightRecognizeResult | None = None
+        maybe_result: list[LightRecognizeResult] | None = None
 
         maybe_result = smart_recognize_all(
             user_input.text,

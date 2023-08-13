@@ -4,9 +4,10 @@ from os import makedirs, path
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 from .classification import generate_best_models
-from .consts import (
+from .const import (
     DATASETS_DIR,
     MODELS_DIR,
 )
@@ -30,6 +31,7 @@ def set_display_options():
     pd.options.display.max_columns = None
     pd.set_option("display.max_rows", 3000)
     pd.set_option("display.max_columns", 3000)
+    tqdm.pandas()
 
 
 def print_models_table(models, current_label):
@@ -51,9 +53,10 @@ def print_models_table(models, current_label):
     table["Score time (s)"] = [f"{x:.2f}" for x in models.loc["mean_score_time"]]
     table["Train accuracy"] = [f"{x:.2f}" for x in models.loc["mean_train_score"]]
     table["Validation accuracy"] = [f"{x:.2f}" for x in models.loc["mean_test_score"]]
+    table["Test accuracy"] = [f"{x:.2f}" for x in models.loc["final_test_score"]]
 
     table.set_index("Model", inplace=True)
-    table.sort_values(by=["Validation accuracy"], inplace=True, ascending=False)
+    table.sort_values(by=["Test accuracy"], inplace=True, ascending=False)
     _LOGGER.info(table)
     # print(table)
 
@@ -74,12 +77,11 @@ def pipeline():
 
     for label in (
         "Intent",
-        "Name",
         "Domain",
-        "State",
-        "DeviceClass",
-        "Area",
         "Response",
+        "State",
+        "Color",
+        "DeviceClass",
     ):
         if show_plots:
             plot_distribution(df[label], label)

@@ -1,9 +1,14 @@
 """Module to generate the commands dataset."""
+from functools import reduce
 import logging
+import re
 
 from nltk import grammar, parse
 from nltk.parse.generate import generate
+from num2words import num2words
 import pandas as pd
+
+from .const import COLORS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,15 +36,49 @@ def turn_onoff_response(area, domain, device_class):
     return "default"
 
 
+def extract_slot_value(tree, slot_label, additional_slot_label=None, leaf=False):
+    """Extract slot value from tree."""
+    if leaf:
+        result = [
+            [" ".join(st.leaves())]
+            for st in list(
+                tree.subtrees(filter=lambda x: slot_label in x.label().values())
+            )
+        ]
+    elif additional_slot_label is None:
+        result = [
+            [" ".join(st1.label().values()) for st1 in st]
+            for st in list(
+                tree.subtrees(filter=lambda x: slot_label in x.label().values())
+            )
+        ]
+    else:
+        result = [
+            [" ".join(st1.label().values()) for st1 in st]
+            for st in list(
+                tree.subtrees(
+                    filter=lambda x: slot_label in x.label().values()
+                    or additional_slot_label in x.label().values()
+                )
+            )
+        ]
+
+    return [item for sublist in result for item in sublist]
+
+
 def generate_artificial_dataset(dataset_file_path):
     """Generate smart home commands from a context-free grammar."""
-    g = """
+    number_strings = ["'" + str(i) + "'" for i in range(0, 101)]
+    numbers1to100 = reduce(lambda x, y: x + " | " + y, number_strings)
+    colors = reduce(lambda x, y: x + " | " + y, ["'" + str(i) + "'" for i in COLORS])
+    g = (
+        """
     ## NLTK-style feature-based CFG
 
     % start S
 
     S -> Intent
-    Intent -> HassTurnOn | HassTurnOff | HassLightSet | HassClimateGetTemperature | HassClimateSetTemperature | HassGetState
+    Intent -> HassTurnOn | HassTurnOff | HassGetState | HassLightSet |  HassClimateGetTemperature | HassClimateSetTemperature
     HassTurnOn -> Light_TurnOn | Fan_TurnOn | Cover_Open | Entity_TurnOn
     HassTurnOff -> Light_TurnOff | Fan_TurnOff | Cover_Close | Entity_TurnOff
     HassGetState -> Cover_Get | Entity_Get
@@ -48,7 +87,9 @@ def generate_artificial_dataset(dataset_file_path):
     HassClimateSetTemperature -> Climate_Set
 
     Percentage -> NumPer | NumPer 'percento'
-    NumPer -> 'zero' | 'cinquanta' | 'cento'
+    NumPer -> """
+        + numbers1to100
+        + """
 
     OnOffDomain[NUM=?n, GEN=?g, ART=?a] -> Fan[NUM=?n, GEN=?g, ART=?a]
     OnOffDomain[NUM=?n, GEN=f] -> Light[NUM=?n, GEN=f]
@@ -97,8 +138,8 @@ def generate_artificial_dataset(dataset_file_path):
     Window[NUM=sg, GEN=f] -> 'finestra'
     Window[NUM=pl, GEN=f] -> 'finestre'
 
-    TurnOn -> 'accendi' | CanYouDo 'accendere' | 'attiva' | CanYouDo 'attivare'
-    TurnOff -> 'spegni' | CanYouDo 'spegnere' | 'disattiva' | CanYouDo 'disattivare'
+    TurnOn -> 'accendi' | CanYouDo 'accendere' | 'attiva' | CanYouDo 'attivare' | 'attacca' | CanYouDo 'attaccare'
+    TurnOff -> 'spegni' | CanYouDo 'spegnere' | 'disattiva' | CanYouDo 'disattivare' | 'stacca' | CanYouDo 'staccare'
     Open -> 'apri' | CanYouDo 'aprire'
     Close -> 'chiudi' | CanYouDo 'chiudere'
     Set -> 'imposta' | CanYouDo 'impostare'
@@ -190,7 +231,7 @@ def generate_artificial_dataset(dataset_file_path):
     HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
     HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g] Where
 
-    EntitySubject[NUM=?n, GEN=?g, ART=?a] -> Name | The[NUM=sg, GEN=?g, ART=?a] Name[NUM=sg, GEN=?g, ART=?a]
+    EntitySubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=sg, GEN=?g, ART=?a] Name[NUM=sg, GEN=?g, ART=?a]
 
     Cover_Get -> Cover_One_YesNo | Cover_Any | Cover_All | Cover_Which | Cover_How_Many
 
@@ -221,24 +262,28 @@ def generate_artificial_dataset(dataset_file_path):
     Cover_HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
     Cover_HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g] Where
 
-    CoverSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] Cover[NUM=?n, GEN=?g, ART=?a] | Cover[NUM=?n, GEN=?g, ART=?a]
+    CoverSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] Cover[NUM=?n, GEN=?g, ART=?a]
     InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a]
 
     Light_TurnOn -> TurnOn LightSubject | TurnOn LightSubject WhereOf
     Light_TurnOff -> TurnOff LightSubject | TurnOff LightSubject WhereOf
 
-    Light_SetBrightness -> Set Brightness Onto Percentage | Set Onto Percentage Brightness
     Light_SetBrightness -> Set Brightness WhereOf Onto Percentage | Set Onto Percentage Brightness WhereOf
+    Light_SetBrightness -> Set Brightness Onto Percentage | Set Onto Percentage Brightness
     Light_SetBrightness -> Change Brightness Into Percentage | Change Into Percentage Brightness
     Light_SetBrightness -> Change Brightness WhereOf Into Percentage | Change Into Percentage Brightness WhereOf
-    Brightness ->  The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f]
+    Brightness ->  The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=?g, ART=?a] Name
 
+    Light_SetColor ->  Set Color Onto ColorValue | Set Onto ColorValue Color
+    Light_SetColor ->  Change Color Into ColorValue | Change Into ColorValue Color
     Light_SetColor ->  Set Color WhereOf Onto ColorValue | Set Onto ColorValue Color WhereOf
     Light_SetColor ->  Change Color WhereOf Into ColorValue | Change Into ColorValue Color WhereOf
-    Color ->  The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f]
-    ColorValue -> 'bianco' | 'blu' | 'giallo'
+    Color ->  The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=?g, ART=?a] Name
+    ColorValue -> """
+        + colors
+        + """
 
-    LightSubject[NUM=?n, GEN=f] -> The[NUM=?n, GEN=f] Light[NUM=?n] | Light[NUM=?n]
+    LightSubject[NUM=?n, GEN=f] -> The[NUM=?n, GEN=f] Light[NUM=?n]
     LightSubject[NUM=pl, GEN=f] -> Every[GEN=f] The[NUM=pl, GEN=f] Light[NUM=pl]
 
     Fan_TurnOn -> TurnOn FanSubject | TurnOn FanSubject WhereOf
@@ -262,23 +307,29 @@ def generate_artificial_dataset(dataset_file_path):
     ExteriorCover[NUM=?n, GEN=?g, ART=?a] -> Garage[NUM=?n, GEN=?g, ART=?a] | Awning[NUM=?n, GEN=?g, ART=?a]
     ExteriorCover[NUM=?n, GEN=?g, ART=?a] -> Gate[NUM=?n, GEN=?g, ART=?a]
 
-    Climate_Get -> CanYouTell ClimateGetQuestion | ClimateGetQuestion
-    ClimateGetQuestion -> WhatIs Temp WhereOf | "che temperatura c'è" Where
-    ClimateGetQuestion -> HowHotCold Where | The[NUM=pl, GEN=m, ART=il] TempUnit WhereOf
+    Climate_Get -> CanYouTell ClimateGetQuestion | ClimateGetQuestion  |  CanYouTell The[NUM=pl, GEN=m, ART=il] TempUnit WhereOf
+    ClimateGetQuestion -> WhatIs Temp WhereOf | "che temperatura c'è" Where | HowHotCold Where
     HowHotCold -> 'quanto fa' HotCold | 'quanto' HotCold 'fa' | "quanto c'è" HotCold
     HowHotCold -> 'quanto' HotCold "c'è" | 'quanti' TempUnit 'ci sono'
     HotCold -> 'caldo' | 'freddo'
 
-    Climate_Set -> Set Temp Onto Temperature | Set Temp WhereOf Onto Temperature
+    Climate_Set -> Set Temp Onto Temperature | Set Onto Temperature Temp
+    Climate_Set -> Set Temp WhereOf Onto Temperature | Set Onto Temperature Temp
     Climate_Set -> Set NumTemp TempUnit Where | Set Where Temp 'di' Temperature
-    Climate_Set -> Change Temp Into Temperature | Change Temp WhereOf Into Temperature
-    Temperature -> NumTemp | NumTemp TempUnit
-    NumTemp -> 'quindici' | 'sedici' | 'diciassette' | 'diciotto' | 'diciannove' | 'venti' | 'ventuno'
-    NumTemp -> 'ventidue' | 'ventitre' | 'ventiquattro' | 'venticinque'
-    Temp ->  The[NUM=sg, GEN=f] 'temperatura'
+    Climate_Set -> Change Temp Into Temperature | Change Into Temperature Temp
+    Climate_Set -> Change Temp WhereOf Into Temperature | Change Into Temperature Temp WhereOf
+
+    Climate[NUM=?n, GEN=?g, ART=?a]  -> Name[NUM=?n, GEN=?g, ART=?a]
+    Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'termostato'
+    Climate[NUM=sg, GEN=f] -> 'valvola termostatica'
+    Temperature -> NumTemp | NumTemp TempUnit | NumTemp 'e mezzo' | NumTemp TempUnit 'e mezzo'
+    NumTemp -> '15' | '16' | '17' | '18' | '19' | '20' | '21'
+    NumTemp -> '22' | '23' | '24' | '25'
+    Temp ->  The[NUM=sg, GEN=f] 'temperatura' | The[NUM=sg, GEN=f] 'temperatura' Of[NUM=?n, GEN=?g, ART=?a] Climate[NUM=?n, GEN=?g, ART=?a]
     TempUnit -> 'gradi' | 'gradi celsius' | 'gradi centigradi'
 
     """
+    )
 
     gr = grammar.FeatureGrammar.fromstring(g)
     parser = parse.FeatureEarleyChartParser(gr)
@@ -293,6 +344,9 @@ def generate_artificial_dataset(dataset_file_path):
             "DeviceClass": [],
             "Response": [],
             "State": [],
+            "Color": [],
+            "Brightness": [],
+            "Temperature": [],
         },
     )
 
@@ -300,118 +354,85 @@ def generate_artificial_dataset(dataset_file_path):
     for s in generate(gr):
         for tree in parser.parse(s):
             i = i + 1
-            _LOGGER.info(str(i) + " " + " ".join(s).strip())
+            text = re.sub(
+                r"(\d+)",
+                lambda x: num2words(int(x.group(0)), lang="it"),
+                " ".join(s).strip(),
+            )
 
             response = "default"
             state = "none"
-            names = [
-                " ".join(st.leaves())
-                for st in list(
-                    tree.subtrees(filter=lambda x: "Name" in x.label().values())
-                )
-            ]
+            brightness = "none"
+            color = "none"
+            name = "none"
+            area = "none"
+            device_class = "none"
+            state = "none"
+            temperature = "none"
+
+            names = extract_slot_value(tree, "Name", leaf=True)
             if names:
                 name = names[0]
-            else:
-                name = "none"
 
-            areas = [
-                " ".join(st.leaves())
-                for st in list(
-                    tree.subtrees(filter=lambda x: "Area" in x.label().values())
-                )
-            ]
+            areas = extract_slot_value(tree, "Area", leaf=True)
             if areas:
                 area = areas[0]
-            else:
-                area = "none"
 
-            intents = [
-                [" ".join(st1.label().values()) for st1 in st]
-                for st in list(
-                    tree.subtrees(filter=lambda x: "Intent" in x.label().values())
-                )
-            ]
-            intent = intents[0][0]
+            intents = extract_slot_value(tree, "Intent")
+            intent = intents[0]
 
-            domains = [
-                [" ".join(st1.label().values()) for st1 in st]
-                for st in list(
-                    tree.subtrees(
-                        filter=lambda x: intent in x.label().values()  # noqa: B023
-                    )
-                )
-            ]
-            domain = domains[0][0].split("_")[0].lower()
-            if domain not in ("cover", "light", "fan"):
+            domains = extract_slot_value(tree, intent)
+            domain = domains[0].split("_")[0].lower()
+            if domain not in ("cover", "light", "fan", "climate"):
                 domain = "none"
 
             if domain == "cover":
-                covers = [
-                    [" ".join(st1.label().values()) for st1 in st]
-                    for st in list(
-                        tree.subtrees(
-                            filter=lambda x: "ExteriorCover" in x.label().values()
-                            or "InteriorCover" in x.label().values()
-                        )
-                    )
-                ]
-                device_class = covers[0][0].split(" ")[0]
-            else:
-                device_class = "none"
+                covers = extract_slot_value(tree, "ExteriorCover", "InteriorCover")
+                device_class = covers[0].split(" ")[0]
 
             if intent in ("HassTurnOn", "HassTurnOff"):
                 response = turn_onoff_response(area, domain, device_class)
             elif intent == "HassGetState":
-                responses = [
-                    [" ".join(st1.label().values()) for st1 in st]
-                    for st in list(
-                        tree.subtrees(
-                            filter=lambda x: "Entity_Get" in x.label().values()
-                            or "Cover_Get" in x.label().values()
-                        )
-                    )
-                ]
-                response = responses[0][0].replace("Cover_", "").lower()
+                responses = extract_slot_value(tree, "Entity_Get", "Cover_Get")
+                response = responses[0].replace("Cover_", "").lower()
                 if domain != "cover":
-                    domains = [
-                        [" ".join(st1.label().values()) for st1 in st]
-                        for st in list(
-                            tree.subtrees(
-                                filter=lambda x: "OnOffDomain" in x.label().values()
-                            )
-                        )
-                    ]
+                    domains = extract_slot_value(tree, "OnOffDomain")
                     if domains:
-                        domain = domains[0][0].split(" ")[0].lower()
-                    else:
-                        domain = "none"
-                states = [
-                    [" ".join(st1.label().values()) for st1 in st]
-                    for st in list(
-                        tree.subtrees(
-                            filter=lambda x: "OnOffState" in x.label().values()
-                            or "OpenCloseState" in x.label().values()
-                        )
-                    )
-                ]
+                        domain = domains[0].split(" ")[0].lower()
+                states = extract_slot_value(tree, "OnOffState", "OpenCloseState")
                 if states:
-                    state = states[0][0].lower().split("state")[0]
+                    state = states[0].lower().split("state")[0]
                     if state == "open":
                         state = "on"
                     elif state == "close":
                         state = "off"
-                else:
-                    state = "none"
 
             elif intent == "HassLightSet":
-                response = domains[0][0].split("_Set")[1].lower()
+                response = domains[0].split("_Set")[1].lower()
+                if response == "brightness":
+                    numbers = extract_slot_value(tree, "NumPer", leaf=True)
+                    brightness = numbers[0]
+                else:
+                    colors = extract_slot_value(tree, "ColorValue", leaf=True)
+                    color = colors[0]
                 if area != "none":
                     response = response + "_area"
+            elif intent == "HassClimateSetTemperature":
+                temperature = extract_slot_value(tree, "NumTemp", leaf=True)[0]
+                if "e mezzo" in text:
+                    temperature = temperature + ".5"
+
+            if text.startswith(
+                ("puoi", "potresti", "qual", "quant", "com", "c'è", "ci sono")
+            ):
+                text = text + "?"
+
+            _LOGGER.info(str(i) + " " + text)
+            # print(str(i) + " " + text)
 
             row = pd.DataFrame(
                 {
-                    "Text": " ".join(s).strip(),
+                    "Text": text.lower(),
                     "Intent": intent,
                     "Domain": domain,
                     "Name": name,
@@ -419,6 +440,9 @@ def generate_artificial_dataset(dataset_file_path):
                     "DeviceClass": device_class,
                     "Response": response,
                     "State": state,
+                    "Color": color,
+                    "Brightness": brightness,
+                    "Temperature": temperature,
                 },
                 index=[0],
             )

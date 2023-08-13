@@ -4,8 +4,9 @@ from os import path
 
 import pandas as pd
 
-from .consts import (
+from .const import (
     DATASETS_DIR,
+    SLOTS,
     USE_SAVED_GRAMMAR,
 )
 from .grammar import (
@@ -14,13 +15,24 @@ from .grammar import (
 
 
 # function to load the dataset
-def load_synthetic_dataset(dataset_file_name="synthetic_dataset.csv"):
+def load_synthetic_dataset(dataset_file_path="synthetic_dataset.csv"):
     """Load the dataset with sample commands."""
-    dataset_file_path = path.join(DATASETS_DIR, dataset_file_name)
+    filename = None
+    if dataset_file_path:
+        filename = path.join(DATASETS_DIR, dataset_file_path)
+    if USE_SAVED_GRAMMAR and filename and os.access(filename, os.R_OK):
+        df = pd.read_csv(filename, index_col=0, header=0)
+    elif USE_SAVED_GRAMMAR:
+        li = []
+        for filename in [
+            path.join(DATASETS_DIR, intent + ".csv") for intent in list(SLOTS.keys())
+        ]:
+            if os.access(filename, os.R_OK):
+                df = pd.read_csv(filename, index_col=0, header=0)
+                li.append(df)
 
-    if USE_SAVED_GRAMMAR and os.access(dataset_file_path, os.R_OK):
-        df = pd.read_csv(dataset_file_path, index_col=0)
-        df.reset_index(drop=True, inplace=True)
+        df = pd.concat(li, axis=0, ignore_index=True)
+        df.to_csv(path.join(DATASETS_DIR, "synthetic_dataset.csv"))
     else:
         df = generate_artificial_dataset(dataset_file_path)
 
