@@ -1,22 +1,24 @@
 """Module to perform the Intent Recognition task."""
 from dataclasses import dataclass, field
 import logging
+import re
 from typing import Any, Optional
 
-from hassil.expression import (
-    TextChunk,
-)
-from hassil.intents import (
-    Intents,
-    TextSlotList,
-)
+from hassil.expression import TextChunk
+from hassil.intents import Intents, TextSlotList
+from nltk.util import ngrams
+import numpy as np
 
 from homeassistant.core import HomeAssistant
 
 from .intent_recognition.classification import load_and_predict
-from .intent_recognition.data_preprocessing import full_text_preprocess
+from .intent_recognition.const import COLORS
+from .intent_recognition.data_preprocessing import full_text_preprocess, preprocess_text
+from .word2vec.word2vec_training import cosine_similarity
 
 _LOGGER = logging.getLogger(__name__)
+
+PUNCTUATION = re.compile(r"[.。,，?¿？؟!！;；:：]+")
 
 
 @dataclass
@@ -28,6 +30,9 @@ class MatchEntity:
 
     value: Any
     """Value of the entity."""
+
+    text: str
+    """Original value text."""
 
 
 @dataclass
@@ -47,124 +52,173 @@ class LightRecognizeResult:
     """Key for intent response."""
 
 
-def smart_intent_recognition(text: str, w2v_model):
-    """Perform the Intent Recognition task with AI."""
+class IntentRecognizer:
+    """Intent recognition for text commands."""
 
-    X = full_text_preprocess(w2v_model, text)
-    result = load_and_predict(X, "svc_linear__without_sw_removal")
+    def __init__(self, w2v_model) -> None:
+        """Initialize the engine."""
+        self.w2v_model = w2v_model
+        self.tokens: list[list[Any]] = []
+        self.ngrams: list[list[Any]] = []
 
-    return result
+    def extract_value(self, valid_values, threshold: float = 0.95):
+        """Extract value from list of tokens."""
+        max_similarity = -1.0
+        best = None
+        for item in valid_values:
+            for ngram in self.ngrams:
+                sim = cosine_similarity(
+                    self.w2v_model, preprocess_text(str(item)), ngram
+                )
+                if sim >= threshold and sim > max_similarity:
+                    max_similarity = sim
+                    best = item
+        return best
 
-
-def recognize_slot(
-    slot_name: str,
-    input_text: str,
-    slot_lists: Optional[dict[str, TextSlotList]] = None,
-):
-    """Recognize the slot values."""
-    if slot_lists is None:
-        return []
-    slot_values = [
-        text_slot_value.text_in
-        for text_slot_value in slot_lists.get(slot_name, TextSlotList(values=[])).values
-    ]
-
-    results = []
-    for item in slot_values:
-        if isinstance(item, TextChunk):
-            chunk: TextChunk = item
-            if chunk.text.lower() in input_text:
-                results.append(chunk.text)
-    return results
-
-
-def smart_recognize_all(
-    text: str,
-    intents: Intents,
-    hass: HomeAssistant,
-    w2v_model: Any,
-    slot_lists: Optional[dict[str, TextSlotList]] = None,
-) -> list[LightRecognizeResult]:
-    """Recognize the intent and fills the slots."""
-    result = smart_intent_recognition(text, w2v_model)
-    _LOGGER.debug(result)
-
-    maybe_matched_entities: list[MatchEntity] = []
-
-    names = recognize_slot("name", text, slot_lists)
-    _LOGGER.debug(names)
-    if not names:
-        names = ["all"]
-
-    areas = recognize_slot("area", text, slot_lists)
-    _LOGGER.debug(areas)
-
-    if result.get("Domain", "none") != "none":
-        maybe_matched_entities.append(
-            MatchEntity(name="domain", value=result["Domain"])
-        )
-    if result.get("DeviceClass", "none") != "none":
-        maybe_matched_entities.append(
-            MatchEntity(name="device_class", value=result["DeviceClass"])
-        )
-    if result.get("State", "none") != "none":
-        maybe_matched_entities.append(MatchEntity(name="state", value=result["State"]))
-    if result.get("Brightness", "none") != "none":
-        maybe_matched_entities.append(
-            MatchEntity(name="brightness", value=result["Brightness"])
-        )
-    if result.get("Color", "none") != "none":
-        maybe_matched_entities.append(MatchEntity(name="color", value=result["Color"]))
-    if result.get("Temperature", "none") != "none":
-        maybe_matched_entities.append(
-            MatchEntity(name="temperature", value=result["Temperature"])
-        )
-
-    response = result.get("Response", "default")
-
-    if areas and names:
-        results = [
-            LightRecognizeResult(
-                intent_name=result["Intent"],
-                entities={
-                    entity.name: entity
-                    for entity in maybe_matched_entities
-                    + [MatchEntity(name="name", value=name)]
-                    + [MatchEntity(name="Area", value=area)]
-                },
-                entities_list=maybe_matched_entities,
-                response=response,
-            )
-            for name in names
-            for area in areas
-        ]
-    elif areas:
-        results = [
-            LightRecognizeResult(
-                intent_name=result["Intent"],
-                entities={
-                    entity.name: entity
-                    for entity in maybe_matched_entities
-                    + [MatchEntity(name="area", value=area)]
-                },
-                entities_list=maybe_matched_entities,
-                response=response,
-            )
-            for area in areas
-        ]
-    elif names:
-        results = [
-            LightRecognizeResult(
-                intent_name=result["Intent"],
-                entities={
-                    entity.name: entity
-                    for entity in maybe_matched_entities
-                    + [MatchEntity(name="name", value=name)]
-                },
-                entities_list=maybe_matched_entities,
-                response=response,
-            )
-            for name in names
+    def recognize_slot(
+        self,
+        slot_name: str,
+        slot_lists: Optional[dict[str, TextSlotList]] = None,
+        threshold: float = 0.95,
+    ) -> list:
+        """Recognize the slot values."""
+        if slot_lists is None:
+            return []
+        slot_values = [
+            text_slot_value.text_in
+            for text_slot_value in slot_lists.get(
+                slot_name, TextSlotList(values=[])
+            ).values
         ]
 
-    return results
+        results = []
+        for item in slot_values:
+            if isinstance(item, TextChunk):
+                chunk: TextChunk = item
+                for ngram in self.ngrams:
+                    if (
+                        cosine_similarity(
+                            self.w2v_model, preprocess_text(chunk.text), ngram
+                        )
+                        >= threshold
+                    ):
+                        results.append(chunk.text)
+        return results
+
+    def smart_recognize_all(
+        self,
+        text: str,
+        intents: Intents,
+        hass: HomeAssistant,
+        w2v_model: Any,
+        slot_lists: Optional[dict[str, TextSlotList]] = None,
+    ) -> list[LightRecognizeResult]:
+        """Recognize the intent and fills the slots."""
+        X, tokens = full_text_preprocess(self.w2v_model, text)
+        self.tokens = [[token] for token in tokens]
+        bigrams = [list(ngram) for ngram in list(ngrams(tokens, 2))]
+        trigrams = [list(ngram) for ngram in list(ngrams(tokens, 3))]
+        self.ngrams = self.tokens + bigrams + trigrams
+        result = load_and_predict(X, "svc_linear__full_undersampling")
+        _LOGGER.debug(result)
+
+        maybe_matched_entities: list[MatchEntity] = []
+
+        names = self.recognize_slot("name", slot_lists)
+        if not names:
+            names = ["all"]
+
+        areas = self.recognize_slot("area", slot_lists)
+
+        if result.get("Domain", "none") != "none":
+            maybe_matched_entities.append(
+                MatchEntity(
+                    name="domain", value=result["Domain"], text=result["Domain"]
+                )
+            )
+        if result.get("DeviceClass", "none") != "none":
+            maybe_matched_entities.append(
+                MatchEntity(
+                    name="device_class",
+                    value=result["DeviceClass"],
+                    text=result["DeviceClass"],
+                )
+            )
+        if result.get("State", "none") != "none":
+            maybe_matched_entities.append(
+                MatchEntity(name="state", value=result["State"], text=result["State"])
+            )
+
+        response = result.get("Response", "default")
+
+        if response.startswith("brightness"):
+            brightness = self.extract_value(np.arange(0, 101, 1))
+            if brightness is not None:
+                maybe_matched_entities.append(
+                    MatchEntity(
+                        name="brightness",
+                        value=brightness,
+                        text=brightness,
+                    )
+                )
+        if response.startswith("color"):
+            color = self.extract_value(COLORS.keys())
+            if color is not None:
+                maybe_matched_entities.append(
+                    MatchEntity(
+                        name="color",
+                        value=COLORS[color.capitalize()],
+                        text=color.lower(),
+                    )
+                )
+
+        if result["Intent"] == "HassClimateSetTemperature":
+            temperature = self.extract_value(np.arange(10, 30, 0.1))
+            if temperature is not None:
+                maybe_matched_entities.append(
+                    MatchEntity(
+                        name="temperature",
+                        value=temperature,
+                        text=temperature,
+                    )
+                )
+
+        if areas:
+            results = [
+                LightRecognizeResult(
+                    intent_name=result["Intent"],
+                    entities={
+                        entity.name: entity
+                        for entity in maybe_matched_entities
+                        + [
+                            MatchEntity(name="name", value=name, text=name),
+                            MatchEntity(name="area", value=area, text=area),
+                        ]
+                    },
+                    entities_list=maybe_matched_entities
+                    + [
+                        MatchEntity(name="name", value=name, text=name),
+                        MatchEntity(name="area", value=area, text=area),
+                    ],
+                    response=response,
+                )
+                for name in names
+                for area in areas
+            ]
+        else:
+            results = [
+                LightRecognizeResult(
+                    intent_name=result["Intent"],
+                    entities={
+                        entity.name: entity
+                        for entity in maybe_matched_entities
+                        + [MatchEntity(name="name", value=name, text=name)]
+                    },
+                    entities_list=maybe_matched_entities
+                    + [MatchEntity(name="name", value=name, text=name)],
+                    response=response,
+                )
+                for name in names
+            ]
+
+        return results

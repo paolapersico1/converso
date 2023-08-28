@@ -4,19 +4,16 @@ import logging
 import os
 from os import path
 
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.pipeline import Pipeline
+from imblearn.under_sampling import RandomUnderSampler
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import skops.io as sio
 
-from .const import (
-    MODELS_DIR,
-    SAVE_MODELS,
-    SLOTS,
-    USE_SAVED_MODELS,
-)
-from .models import classifiers, regressors
+from .const import MODELS_DIR, SAMPLING, SAVE_MODELS, SLOTS, USE_SAVED_MODELS
+from .models import classifiers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,11 +25,13 @@ def load_and_predict(X, model_name):
     model = sio.load(model_file_path, trusted=True)
     result["Intent"] = model.predict(X)[0]
     for slot in SLOTS[result["Intent"]]:
-        if not (slot == "Response" and result.get("State", "") == "one") and not (
+        if not (slot == "State" and result.get("Response", "") == "one") and not (
             slot == "DeviceClass" and result["Domain"] != "cover"
         ):
             model_file_path, model_file_info = get_models_metadata(model_name, slot)
             model = sio.load(model_file_path, trusted=True)
+            if slot.startswith("Response"):
+                slot = "Response"
             result[slot] = model.predict(X)[0]
     return result
 
@@ -41,11 +40,7 @@ def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
     """Load or generate the best models."""
     best_models = {}
 
-    models = []
-    if label not in ("Brightness", "Temperature"):
-        models = classifiers
-    else:
-        models = regressors
+    models = classifiers
 
     for clf_name, model, params in models:
         model_name = clf_name + "__" + dataset_name
@@ -89,10 +84,14 @@ def generate_best_models(x_train, y_train, x_test, y_test, dataset_name, label):
 
 def grid_search(x_trainval, y_trainval, clf, params):
     """Perform grid search with different parameters."""
-    pipeline = Pipeline([("scaler", StandardScaler()), ("clf", clf)])
+    if SAMPLING == "undersampling":
+        rs = RandomUnderSampler()
+    else:
+        rs = RandomOverSampler()
+    pipeline = Pipeline([("sampling", rs), ("scaler", StandardScaler()), ("clf", clf)])
 
     gs = GridSearchCV(
-        pipeline, params, cv=4, n_jobs=4, return_train_score=True, verbose=3
+        pipeline, params, cv=5, n_jobs=1, return_train_score=True, verbose=3
     )
     gs.fit(x_trainval, y_trainval)
 

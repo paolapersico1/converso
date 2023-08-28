@@ -9,23 +9,25 @@ USE_SAVED_GRAMMAR = True
 USE_SAVED_DATASETS = True
 USE_SAVED_MODELS = True
 SAVE_MODELS = True
+
+SAMPLING = "undersampling"
 SLOTS = {
-    "HassTurnOn": ("Domain", "DeviceClass"),
-    "HassTurnOff": ("Domain", "DeviceClass"),
-    "HassGetState": ("Domain", "DeviceClass", "State", "Response"),
-    "HassLightSet": ("Response",),
+    "HassTurnOn": ("Domain", "DeviceClass", "ResponseHassTurn"),
+    "HassTurnOff": ("Domain", "DeviceClass", "ResponseHassTurn"),
+    "HassGetState": ("Domain", "DeviceClass", "State", "ResponseHassGetState"),
+    "HassLightSet": ("ResponseHassLightSet",),
     "HassClimateGetTemperature": (),
     "HassClimateSetTemperature": (),
 }
 
-COLORS = [
-    "Giallo",
-    "Bianco",
-    "Viola",
-    "Rosso",
-    "Arancione",
-    "Marrone",
-    "Blu",
-    "Verde",
-    "Nero",
-]
+COLORS = {
+    "Giallo": "yellow",
+    "Bianco": "white",
+    "Viola": "purple",
+    "Rosso": "red",
+    "Arancione": "orange",
+    "Marrone": "brown",
+    "Blu": "blue",
+    "Verde": "green",
+    "Nero": "black",
+}

@@ -52,8 +52,8 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
-from .intent_recognition.word2vec.word2vec_training import get_word2vec_model
-from .recognition import LightRecognizeResult, smart_recognize_all
+from .recognition import IntentRecognizer, LightRecognizeResult
+from .word2vec.word2vec_training import get_word2vec_model
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 _LOGGER = logging.getLogger(__name__)
@@ -146,7 +146,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_setup(hass: core.HomeAssistant, config: ConfigType) -> bool:
     """Converso agent setup."""
-    # await hass.async_add_executor_job(pipeline())
     return True
 
 
@@ -169,7 +168,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self._trigger_intents: Intents | None = None
 
         self.model = get_word2vec_model()
-        # pipeline()
+        self.intent_recognizer = IntentRecognizer(self.model)
         # self.vocab = w2v_words(self.model)
         # self.speech_corrector = SpeechCorrector(self.vocab)
 
@@ -310,6 +309,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
                     response_template = template.Template(
                         response_template_str, self.hass
                     )
+                    _LOGGER.debug(intent_response.unmatched_states)
                     speech = await self._build_speech(
                         language, response_template, intent_response, result
                     )
@@ -329,13 +329,15 @@ class ConversoAgent(agent.AbstractConversationAgent):
         # Prioritize matches with entity names above area names
         maybe_result: list[LightRecognizeResult] | None = None
 
-        maybe_result = smart_recognize_all(
+        maybe_result = self.intent_recognizer.smart_recognize_all(
             user_input.text,
             lang_intents.intents,
             self.hass,
             self.model,
             slot_lists=slot_lists,
         )
+
+        _LOGGER.debug(maybe_result)
 
         return maybe_result
 
@@ -385,7 +387,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
             {
                 # Slots from intent recognizer
                 "slots": {
-                    entity_name: entity_value.value
+                    entity_name: entity_value.text or entity_value.value
                     for entity_name, entity_value in recognize_result.entities.items()
                 },
                 # First matched or unmatched state
