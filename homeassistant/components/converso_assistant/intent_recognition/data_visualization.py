@@ -33,16 +33,10 @@ def plot_confusion_matrices(models, x, y, n_cols=3):
     plt.show()
 
 
-def plot_testing_accuracy(scores_table, models_names, dataset_names):
+def plot_testing_accuracy(scores_table, models_names):
     """Plot testing accuracies for different models and datasets."""
-    data = [
-        [
-            scores_table[model_name + "__" + dataset_name]
-            for dataset_name in dataset_names
-        ]
-        for model_name in models_names
-    ]
-    df = pd.DataFrame(data, columns=dataset_names, index=models_names)
+    data = [scores_table[model_name] for model_name in models_names]
+    df = pd.DataFrame(data, columns=["Dataset"], index=models_names)
 
     ax = df.plot.bar(rot=0)
     plt.xticks(range(len(models_names)), [x.replace("_", " ") for x in models_names])
@@ -51,5 +45,5 @@ def plot_testing_accuracy(scores_table, models_names, dataset_names):
             str(round(p.get_height() * 100)) + "%",
             (p.get_x() * 1.005, p.get_height() * 1.005),
         )
-    plt.title("Testing accuracies per Dataset")
+    plt.title("Testing accuracies")
     plt.show()

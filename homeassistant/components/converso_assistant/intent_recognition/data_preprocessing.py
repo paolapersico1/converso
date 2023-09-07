@@ -8,107 +8,83 @@ from nltk import WhitespaceTokenizer
 from nltk.corpus import stopwords
 import numpy as np
 import pandas as pd
-from word2vec.word2vec_training import W2V_DIM, get_word2vec_model, w2v
+from sklearn.base import BaseEstimator, TransformerMixin
 
-from .const import DATASETS_DIR, SAMPLING, SLOTS, USE_SAVED_DATASETS
+from .const import DATASETS_DIR, SLOTS, USE_SAVED_DATASETS
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def preprocess_dataset(df):
-    """Create word2vec datasets (with and without stopwords)."""
-    filepath1 = path.join(DATASETS_DIR, "dataset_without_sw_removal.csv")
-    filepath2 = path.join(DATASETS_DIR, "dataset_with_sw_removal.csv")
-    if (
-        USE_SAVED_DATASETS
-        and os.access(filepath1, os.R_OK)
-        and os.access(filepath2, os.R_OK)
-    ):
-        _LOGGER.info("Fetching saved word2vec dataset")
-        # print("Fetching saved word2vec dataset")
-        new_df = pd.read_csv(filepath1, index_col=0)
-        new_df_without_sw = pd.read_csv(filepath2, index_col=0)
-    else:
-        new_df = df.copy()
-        new_df["Text"] = df["Text"].apply(lambda line: preprocess_text(str(line)))
+class W2VTransformer(BaseEstimator, TransformerMixin):
+    """W2V Transformer for Pipeline."""
 
-        new_df_without_sw = new_df.copy()
+    def __init__(self, w2v, with_sw=True) -> None:
+        """Init for transformer."""
+        self.w2v = w2v
+        self.with_sw = with_sw
 
-        new_df_without_sw["Text"] = remove_stopwords(new_df_without_sw["Text"])
+    def fit(self, X, y=None):
+        """Fit for transformer."""
+        return self
 
-        new_df["Text"] = new_df["Text"].astype("string")
-        new_df_without_sw["Text"] = new_df_without_sw["Text"].astype("string")
-
-        new_df_without_sw.drop_duplicates(inplace=True)
-        new_df = get_word2vec_dataset(new_df, filepath1)
-        new_df_without_sw = get_word2vec_dataset(new_df_without_sw, filepath2)
-
-    subsets = {"without_sw_removal": new_df, "with_sw_removal": new_df_without_sw}
-
-    return subsets
+    def transform(self, X):
+        """Transform for transformer."""
+        X = preprocess_dataset(X, self.w2v, self.with_sw)
+        return X.to_numpy()
 
 
-def create_label_datasets(df, df_without_sw, label):
+def preprocess_dataset(arr, w2v, with_sw):
+    """Create word2vec dataset."""
+    df = pd.DataFrame(arr, columns=["Text"])
+    df["Text"] = df["Text"].apply(lambda line: preprocess_text(str(line)))
+
+    if not with_sw:
+        df["Text"] = remove_stopwords(df["Text"])
+
+    df["Text"] = df["Text"].astype("string")
+    df = get_word2vec_dataset(df, w2v)
+
+    return df
+
+
+def create_label_datasets(label, input_df=None):
     """Create dataset for specific label."""
-    filepath1 = path.join(
-        DATASETS_DIR, label + "_dataset_without_sw_removal_" + SAMPLING + ".csv"
+    filepath = path.join(
+        DATASETS_DIR,
+        label + "_dataset.csv",
     )
-    filepath2 = path.join(
-        DATASETS_DIR, label + "_dataset_with_sw_removal_" + SAMPLING + ".csv"
-    )
-    filepath3 = path.join(DATASETS_DIR, label + "_full_dataset_" + SAMPLING + ".csv")
-    if (
-        USE_SAVED_DATASETS
-        and os.access(filepath1, os.R_OK)
-        and os.access(filepath2, os.R_OK)
-        and os.access(filepath3, os.R_OK)
-    ):
+    if USE_SAVED_DATASETS and os.access(filepath, os.R_OK):
         _LOGGER.info("Fetching saved dataset for label " + label)
-        # print("Fetching saved dataset for label " + label)
-        df = pd.read_csv(filepath1, index_col=0)
-        df_without_sw = pd.read_csv(filepath2, index_col=0)
-        full_df = pd.read_csv(filepath3, index_col=0)
+        df = pd.read_csv(filepath, index_col=0)
     else:
-        for dataframe in (df, df_without_sw):
-            if label != "Intent":
-                indices_to_drop = []
-                for index, row in dataframe.iterrows():
-                    if (
-                        (label not in SLOTS[row["Intent"]])
-                        or (label == "State" and row["Response"] == "one")
-                        or (label == "DeviceClass" and row["Domain"] != "cover")
-                    ):
-                        indices_to_drop.append(index)
-                dataframe.drop(indices_to_drop, inplace=True)
+        df = input_df.copy()
+        if label != "Intent":
+            indices_to_drop = []
+            for index, row in df.iterrows():
+                if (
+                    (label not in SLOTS[row["Intent"]])
+                    or (label == "State" and row["Response"] == "one")
+                    or (label == "DeviceClass" and row["Domain"] != "cover")
+                ):
+                    indices_to_drop.append(index)
+            df.drop(indices_to_drop, inplace=True)
 
-            dataframe.drop(
-                columns=[
-                    col
-                    for col in dataframe
-                    if (
-                        (
-                            col != label
-                            and not (label.startswith("Response") and col == "Response")
-                        )
-                        and (not col.startswith("v_"))
-                    )
-                ],
-                inplace=True,
-            )
+        df.drop(
+            columns=[
+                col
+                for col in df
+                if (
+                    col != "Text"
+                    and col != label
+                    and not (label.startswith("Response") and col == "Response")
+                )
+            ],
+            inplace=True,
+        )
 
-        df.to_csv(filepath1)
-        df_without_sw.to_csv(filepath2)
-        full_df = pd.concat([df, df_without_sw], ignore_index=True)
-        full_df.drop_duplicates(inplace=True)
-        full_df.to_csv(filepath3)
+        df.to_csv(filepath)
 
-    subsets = {
-        "without_sw_removal_" + SAMPLING: df,
-        "with_sw_removal_" + SAMPLING: df_without_sw,
-        "full_" + SAMPLING: full_df,
-    }
-
-    return subsets
+    return df
 
 
 def preprocess_text(text):
@@ -156,33 +132,34 @@ def remove_stopwords(series):
     return series_without_sw
 
 
-def full_text_preprocess(w2v_model, text):
+def mean_embedding(w2v, token_list):
+    """Return the average embedding over list of tokens."""
+    result = np.mean(
+        [
+            w2v.word2vector(token.strip(" '"))
+            for token in token_list
+            if token.strip(" '") in w2v.w2v_model
+        ],
+        axis=0,
+    )
+    return result
+
+
+def full_text_preprocess(w2v, text):
     """Return a dataframe with a vector representation of a text and the list of tokens."""
     text = preprocess_text(text)
-    df = pd.DataFrame(columns=["v_" + str(i) for i in range(W2V_DIM)])
-    df.loc[0] = np.mean([w2v(w2v_model, token.strip(" '")) for token in text], axis=0)
+    df = pd.DataFrame(columns=["v_" + str(i) for i in range(w2v.w2v_dim)])
+    df.loc[0] = mean_embedding(w2v, text).tolist()
     return df, text
 
 
-def get_word2vec_dataset(df, filepath):
+def get_word2vec_dataset(df, w2v):
     """Return a word2vec dataset."""
     _LOGGER.info("Creating a new word2vec dataset")
-    # print("Creating a new word2vec dataset")
-    w2v_model = get_word2vec_model()
-    vectors = df["Text"].apply(
-        lambda line: np.mean(
-            [
-                w2v(w2v_model, token.strip(" '"))
-                for token in line.strip("][").split(",")
-            ],
-            axis=0,
-        ).tolist()
+    df["Text"] = df["Text"].apply(
+        lambda line: mean_embedding(w2v, line.strip("][").split(",")).tolist()
     )
-    text_cols = ["v_" + str(i) for i in range(W2V_DIM)]
-    df[text_cols] = list(vectors.values)
-    # df = df.drop(columns=["Text"])
-    df.to_csv(filepath)
-
-    _LOGGER.info("The " + filepath + " dataset is ready to be used")
-    # print("The " + filepath + " dataset is ready to be used")
+    add_columns = pd.DataFrame(df["Text"].tolist(), index=df.index)
+    df = pd.concat([df, add_columns], axis=1)
+    df = df.drop(columns=["Text"])
     return df

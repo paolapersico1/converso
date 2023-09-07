@@ -13,8 +13,7 @@ from homeassistant.core import HomeAssistant
 
 from .intent_recognition.classification import load_and_predict
 from .intent_recognition.const import COLORS
-from .intent_recognition.data_preprocessing import full_text_preprocess, preprocess_text
-from .word2vec.word2vec_training import cosine_similarity
+from .intent_recognition.data_preprocessing import preprocess_text
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,9 +54,9 @@ class LightRecognizeResult:
 class IntentRecognizer:
     """Intent recognition for text commands."""
 
-    def __init__(self, w2v_model) -> None:
+    def __init__(self, w2v) -> None:
         """Initialize the engine."""
-        self.w2v_model = w2v_model
+        self.w2v = w2v
         self.tokens: list[list[Any]] = []
         self.ngrams: list[list[Any]] = []
 
@@ -67,9 +66,7 @@ class IntentRecognizer:
         best = None
         for item in valid_values:
             for ngram in self.ngrams:
-                sim = cosine_similarity(
-                    self.w2v_model, preprocess_text(str(item)), ngram
-                )
+                sim = self.w2v.cosine_similarity(preprocess_text(str(item)), ngram)
                 if sim >= threshold and sim > max_similarity:
                     max_similarity = sim
                     best = item
@@ -97,9 +94,7 @@ class IntentRecognizer:
                 chunk: TextChunk = item
                 for ngram in self.ngrams:
                     if (
-                        cosine_similarity(
-                            self.w2v_model, preprocess_text(chunk.text), ngram
-                        )
+                        self.w2v.cosine_similarity(preprocess_text(chunk.text), ngram)
                         >= threshold
                     ):
                         results.append(chunk.text)
@@ -107,14 +102,13 @@ class IntentRecognizer:
 
     def smart_recognize_all(
         self,
-        text: str,
+        input_tuple: tuple,
         intents: Intents,
         hass: HomeAssistant,
-        w2v_model: Any,
         slot_lists: Optional[dict[str, TextSlotList]] = None,
     ) -> list[LightRecognizeResult]:
         """Recognize the intent and fills the slots."""
-        X, tokens = full_text_preprocess(self.w2v_model, text)
+        (X, tokens) = input_tuple
         self.tokens = [[token] for token in tokens]
         bigrams = [list(ngram) for ngram in list(ngrams(tokens, 2))]
         trigrams = [list(ngram) for ngram in list(ngrams(tokens, 3))]
@@ -130,7 +124,7 @@ class IntentRecognizer:
 
         areas = self.recognize_slot("area", slot_lists)
 
-        if result.get("Domain", "none") != "none":
+        if result.get("Domain", "default") != "default":
             maybe_matched_entities.append(
                 MatchEntity(
                     name="domain", value=result["Domain"], text=result["Domain"]

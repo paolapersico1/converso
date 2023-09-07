@@ -52,8 +52,10 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
+from .intent_recognition.data_preprocessing import full_text_preprocess
 from .recognition import IntentRecognizer, LightRecognizeResult
-from .word2vec.word2vec_training import get_word2vec_model
+from .speech_correction import SpeechCorrector
+from .word2vec.word2vec import Word2Vec
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 _LOGGER = logging.getLogger(__name__)
@@ -167,10 +169,9 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self._trigger_sentences: list[TriggerData] = []
         self._trigger_intents: Intents | None = None
 
-        self.model = get_word2vec_model()
-        self.intent_recognizer = IntentRecognizer(self.model)
-        # self.vocab = w2v_words(self.model)
-        # self.speech_corrector = SpeechCorrector(self.vocab)
+        self.w2v = Word2Vec(dim=100)
+        self.intent_recognizer = IntentRecognizer(self.w2v)
+        self.speech_corrector = SpeechCorrector()
 
     @property
     def supported_languages(self) -> list[str]:
@@ -329,11 +330,27 @@ class ConversoAgent(agent.AbstractConversationAgent):
         # Prioritize matches with entity names above area names
         maybe_result: list[LightRecognizeResult] | None = None
 
+        X, tokens = full_text_preprocess(self.w2v, user_input.text)
+        custom_names: set[str] = {
+            str(text_slot_value.text_in)
+            for text_slot_value in slot_lists.get(
+                "name", TextSlotList(values=[])
+            ).values
+        }
+        custom_areas: set[str] = {
+            str(text_slot_value.text_in)
+            for text_slot_value in slot_lists.get(
+                "area", TextSlotList(values=[])
+            ).values
+        }
+
+        self.speech_corrector.add_custom(custom_names.union(custom_areas))
+        _LOGGER.debug(self.speech_corrector.domain_vocab)
+
         maybe_result = self.intent_recognizer.smart_recognize_all(
-            user_input.text,
+            (X, tokens),
             lang_intents.intents,
             self.hass,
-            self.model,
             slot_lists=slot_lists,
         )
 

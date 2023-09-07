@@ -3,17 +3,9 @@ import logging
 from os import makedirs, path
 
 from intent_recognition.classification import generate_best_models
-from intent_recognition.const import (
-    DATASETS_DIR,
-    MODELS_DIR,
-    USE_SAVED_DATASETS,
-    USE_SAVED_GRAMMAR,
-)
+from intent_recognition.const import DATASETS_DIR, MODELS_DIR, WORD2VEC_DIM
 from intent_recognition.data_acquisition import load_synthetic_dataset
-from intent_recognition.data_preprocessing import (
-    create_label_datasets,
-    preprocess_dataset,
-)
+from intent_recognition.data_preprocessing import create_label_datasets
 from intent_recognition.data_visualization import (
     plot_confusion_matrices,
     plot_distribution,
@@ -22,8 +14,7 @@ from intent_recognition.data_visualization import (
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-
-from .word2vec.word2vec_training import W2V_DIM
+from word2vec.word2vec import Word2Vec
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,7 +31,6 @@ def set_display_options():
 def print_models_table(models, current_label):
     """Log model information."""
     _LOGGER.info("\nBest models for " + current_label + ":\n")
-    # print("\nBest models for " + current_label + ":\n")
 
     hyperparams = {}
     table = pd.DataFrame({"Model": models.columns})
@@ -61,7 +51,6 @@ def print_models_table(models, current_label):
     table.set_index("Model", inplace=True)
     table.sort_values(by=["Test accuracy"], inplace=True, ascending=False)
     _LOGGER.info(table)
-    # print(table)
 
 
 def pipeline():
@@ -76,10 +65,9 @@ def pipeline():
     if not path.exists(DATASETS_DIR):
         makedirs(DATASETS_DIR)
 
-    df = None
-    if not USE_SAVED_GRAMMAR or not USE_SAVED_DATASETS:
-        df = load_synthetic_dataset()
-    datasets = preprocess_dataset(df)
+    w2v = Word2Vec(dim=WORD2VEC_DIM)
+
+    df = load_synthetic_dataset()
 
     for label in (
         "ResponseHassTurn",
@@ -93,39 +81,36 @@ def pipeline():
         if show_plots:
             plot_distribution(df[label], label)
 
-        label_datasets = create_label_datasets(
-            datasets["without_sw_removal"].copy(),
-            datasets["with_sw_removal"].copy(),
+        label_dataset = create_label_datasets(
             label,
+            df,
         )
 
         best_models = {}
 
-        for dataset_name, dataset_current in label_datasets.items():
-            _LOGGER.info("\nLabel: " + label + " - Training on " + dataset_name + "\n")
-            # print("\nLabel: " + label + " - Training on " + dataset_name + "\n")
+        _LOGGER.info("\nLabel: " + label + " - Training\n")
 
-            x_current = dataset_current.iloc[:, -W2V_DIM:]
-            if label.startswith("Response"):
-                y_current = dataset_current["Response"]
-            else:
-                y_current = dataset_current[label]
+        x_current = label_dataset["Text"].to_numpy().reshape(-1, 1)
+        if label.startswith("Response"):
+            y_current = label_dataset["Response"]
+        else:
+            y_current = label_dataset[label]
 
-            x_train, x_test, y_train, y_test = train_test_split(
-                x_current,
-                y_current,
-                test_size=0.20,
-                random_state=42,
-                stratify=y_current,
-            )
+        x_train, x_test, y_train, y_test = train_test_split(
+            x_current,
+            y_current,
+            test_size=0.10,
+            random_state=42,
+            stratify=y_current,
+        )
 
-            current_bests = generate_best_models(
-                x_train, y_train, x_test, y_test, dataset_name, label
-            )
-            best_models.update(current_bests)
+        current_bests = generate_best_models(
+            x_train, y_train, x_test, y_test, label, w2v
+        )
+        best_models.update(current_bests)
 
-            if show_plots:
-                plot_confusion_matrices(current_bests, x_test, y_test, n_cols=3)
+        if show_plots:
+            plot_confusion_matrices(current_bests, x_test, y_test, n_cols=3)
 
         pd_models = pd.DataFrame(best_models)
         print_models_table(pd_models, label)
@@ -135,8 +120,5 @@ def pipeline():
                 [name.split("__")[0] for name in pd_models.columns]
             )
             plot_testing_accuracy(
-                pd_models.transpose()["final_test_score"], models_names, datasets.keys()
+                pd_models.transpose()["final_test_score"], models_names, label_dataset
             )
-
-
-pipeline()

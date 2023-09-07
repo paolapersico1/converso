@@ -2,12 +2,9 @@
 from functools import reduce
 import logging
 
-# from os import path
-import re
-
 from nltk import grammar, parse
 from nltk.parse.generate import generate
-from num2words import num2words
+import numpy as np
 import pandas as pd
 
 from .const import COLORS
@@ -20,17 +17,17 @@ def turn_onoff_response(area, domain, device_class):
     if device_class == "Garage":
         return "cover_garage"
 
-    if area != "none":
+    if area != "None":
         if domain == "light":
             return "lights_area"
         if domain == "fan":
             return "fans_area"
-        if domain == "cover" and device_class == "none":
+        if domain == "cover" and device_class == "None":
             return "cover_area"
         if domain == "cover":
             return "cover_device_class_area"
     else:
-        if domain == "cover" and device_class == "none":
+        if domain == "cover" and device_class == "None":
             return "cover"
         if domain == "cover":
             return "cover_device_class"
@@ -44,14 +41,13 @@ def extract_slot_value(tree, slot_label, additional_slot_label=None, leaf=False)
         result = [
             [" ".join(st.leaves())]
             for st in list(
-                tree.subtrees(filter=lambda x: slot_label in x.label().values())
-            )
-        ]
-    elif additional_slot_label is None:
-        result = [
-            [" ".join(st1.label().values()) for st1 in st]
-            for st in list(
-                tree.subtrees(filter=lambda x: slot_label in x.label().values())
+                tree.subtrees(
+                    filter=lambda x: slot_label in x.label().values()
+                    or (
+                        additional_slot_label
+                        and (additional_slot_label in x.label().values())
+                    )
+                )
             )
         ]
     else:
@@ -60,7 +56,10 @@ def extract_slot_value(tree, slot_label, additional_slot_label=None, leaf=False)
             for st in list(
                 tree.subtrees(
                     filter=lambda x: slot_label in x.label().values()
-                    or additional_slot_label in x.label().values()
+                    or (
+                        additional_slot_label
+                        and (additional_slot_label in x.label().values())
+                    )
                 )
             )
         ]
@@ -70,8 +69,12 @@ def extract_slot_value(tree, slot_label, additional_slot_label=None, leaf=False)
 
 def generate_artificial_dataset(dataset_file_path):
     """Generate smart home commands from a context-free grammar."""
-    number_strings = ["'" + str(i) + "'" for i in range(0, 101)]
-    numbers1to100 = reduce(lambda x, y: x + " | " + y, number_strings)
+    number1to100_strings = ["'" + str(i) + "'" for i in range(0, 101, 5)]
+    numbers1to100 = reduce(lambda x, y: x + " | " + y, number1to100_strings)
+    number15to25_strings = ["'" + str(i) + "'" for i in range(15, 26)]
+    numbers15to25 = reduce(lambda x, y: x + " | " + y, number15to25_strings)
+    number15to25_half_strings = ["'" + str(i) + "'" for i in np.arange(15.5, 26.5, 1)]
+    numbers15to25_half = reduce(lambda x, y: x + " | " + y, number15to25_half_strings)
     colors = reduce(lambda x, y: x + " | " + y, ["'" + str(i) + "'" for i in COLORS])
     g = (
         """
@@ -80,7 +83,7 @@ def generate_artificial_dataset(dataset_file_path):
     % start S
 
     S -> Intent
-    Intent -> HassTurnOn | HassTurnOff | HassGetState | HassLightSet | HassClimateGetTemperature | HassClimateSetTemperature
+    Intent -> HassGetState
     HassTurnOn -> Light_TurnOn | Fan_TurnOn | Cover_Open | Entity_TurnOn
     HassTurnOff -> Light_TurnOff | Fan_TurnOff | Cover_Close | Entity_TurnOff
     HassGetState -> Cover_Get | Entity_Get
@@ -88,7 +91,7 @@ def generate_artificial_dataset(dataset_file_path):
     HassClimateGetTemperature -> Climate_Get
     HassClimateSetTemperature -> Climate_Set
 
-    Percentage -> NumPer | NumPer 'percento'
+    Percentage -> NumPer | NumPer '%'
     NumPer -> """
         + numbers1to100
         + """
@@ -146,7 +149,9 @@ def generate_artificial_dataset(dataset_file_path):
     Close -> 'chiudi' | CanYouDo 'chiudere'
     Set -> 'imposta' | CanYouDo 'impostare'
     Change ->  'cambia' | CanYouDo 'cambiare'
-    Area -> 'custom_area'
+    Area[NUM=sg, GEN=f] -> 'cucina' | 'camera da letto'
+    Area[NUM=sg, GEN=m, ART=il] -> 'bagno' | 'salotto'
+    Area[NUM=sg, GEN=m, ART=lo] -> 'studio'
     Name -> 'custom_name'
 
     CanYouDo -> 'potresti' | 'puoi'
@@ -321,14 +326,22 @@ def generate_artificial_dataset(dataset_file_path):
     Climate_Set -> Change Temp Into Temperature | Change Into Temperature Temp
     Climate_Set -> Change Temp WhereOf Into Temperature | Change Into Temperature Temp WhereOf
 
-    Climate[NUM=?n, GEN=?g, ART=?a]  -> Name[NUM=?n, GEN=?g, ART=?a]
-    Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'termostato'
+    Climate[NUM=?n, GEN=?g, ART=?a] -> Name[NUM=?n, GEN=?g, ART=?a]
+    Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'termostato' | 'termosifone'
     Climate[NUM=sg, GEN=f] -> 'valvola termostatica'
-    Temperature -> NumTemp | NumTemp TempUnit | NumTemp 'e mezzo' | NumTemp TempUnit 'e mezzo'
-    NumTemp -> '15' | '16' | '17' | '18' | '19' | '20' | '21'
-    NumTemp -> '22' | '23' | '24' | '25'
+    Temperature -> NumTemp | NumTemp TempUnitSymbol |  NumTempInt 'e mezzo' | NumTempInt TempUnitSymbol 'e mezzo'
+    NumTempInt -> """
+        + numbers15to25
+        + """
+    NumTempHalf -> """
+        + numbers15to25_half
+        + """
+    NumTemp -> NumTempInt | NumTempHalf
     Temp ->  The[NUM=sg, GEN=f] 'temperatura' | The[NUM=sg, GEN=f] 'temperatura' Of[NUM=?n, GEN=?g, ART=?a] Climate[NUM=?n, GEN=?g, ART=?a]
     TempUnit -> 'gradi' | 'gradi celsius' | 'gradi centigradi'
+    TempSymbol ->  '°' | '°C'
+    TempUnitSymbol -> TempUnit | TempSymbol
+
 
     """
     )
@@ -356,21 +369,17 @@ def generate_artificial_dataset(dataset_file_path):
     for s in generate(gr):
         for tree in parser.parse(s):
             i = i + 1
-            text = re.sub(
-                r"(\d+)",
-                lambda x: num2words(int(x.group(0)), lang="it"),
-                " ".join(s).strip(),
-            )
+            text = " ".join(s).strip()
 
             response = "default"
-            state = "none"
-            brightness = "none"
-            color = "none"
-            name = "none"
-            area = "none"
-            device_class = "none"
-            state = "none"
-            temperature = "none"
+            state = "None"
+            brightness = "None"
+            color = "None"
+            name = "None"
+            area = "None"
+            device_class = "None"
+            state = "None"
+            temperature = "None"
 
             names = extract_slot_value(tree, "Name", leaf=True)
             if names:
@@ -386,7 +395,7 @@ def generate_artificial_dataset(dataset_file_path):
             domains = extract_slot_value(tree, intent)
             domain = domains[0].split("_")[0].lower()
             if domain not in ("cover", "light", "fan", "climate"):
-                domain = "none"
+                domain = "default"
 
             if domain == "cover":
                 covers = extract_slot_value(tree, "ExteriorCover", "InteriorCover")
@@ -417,10 +426,12 @@ def generate_artificial_dataset(dataset_file_path):
                 else:
                     colors = extract_slot_value(tree, "ColorValue", leaf=True)
                     color = colors[0]
-                if area != "none":
+                if area != "None":
                     response = response + "_area"
             elif intent == "HassClimateSetTemperature":
-                temperature = extract_slot_value(tree, "NumTemp", leaf=True)[0]
+                temperature = extract_slot_value(
+                    tree, "NumTemp", "NumTempInt", leaf=True
+                )[0]
                 if "e mezzo" in text:
                     temperature = temperature + ".5"
 
@@ -429,8 +440,8 @@ def generate_artificial_dataset(dataset_file_path):
             ):
                 text = text + "?"
 
+            text = text.replace(".0", "")
             _LOGGER.info(str(i) + " " + text)
-            # print(str(i) + " " + text)
 
             row = pd.DataFrame(
                 {
@@ -452,6 +463,3 @@ def generate_artificial_dataset(dataset_file_path):
 
     df.to_csv(dataset_file_path)
     return df
-
-
-# generate_artificial_dataset(path.join(DATASETS_DIR, "HassGetState.csv"))
