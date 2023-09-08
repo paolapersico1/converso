@@ -31,6 +31,7 @@ def set_display_options():
 def print_models_table(models, current_label):
     """Log model information."""
     _LOGGER.info("\nBest models for " + current_label + ":\n")
+    # print("\nBest models for " + current_label + ":\n")
 
     hyperparams = {}
     table = pd.DataFrame({"Model": models.columns})
@@ -51,6 +52,7 @@ def print_models_table(models, current_label):
     table.set_index("Model", inplace=True)
     table.sort_values(by=["Test accuracy"], inplace=True, ascending=False)
     _LOGGER.info(table)
+    # print(table)
 
 
 def pipeline():
@@ -65,9 +67,8 @@ def pipeline():
     if not path.exists(DATASETS_DIR):
         makedirs(DATASETS_DIR)
 
-    w2v = Word2Vec(dim=WORD2VEC_DIM)
-
     df = load_synthetic_dataset()
+    w2v = Word2Vec(dim=WORD2VEC_DIM)
 
     for label in (
         "ResponseHassTurn",
@@ -89,6 +90,7 @@ def pipeline():
         best_models = {}
 
         _LOGGER.info("\nLabel: " + label + " - Training\n")
+        # print("\nLabel: " + label + " - Training\n")
 
         x_current = label_dataset["Text"].to_numpy().reshape(-1, 1)
         if label.startswith("Response"):
@@ -122,3 +124,6 @@ def pipeline():
             plot_testing_accuracy(
                 pd_models.transpose()["final_test_score"], models_names, label_dataset
             )
+
+
+pipeline()

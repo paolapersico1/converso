@@ -102,18 +102,18 @@ class IntentRecognizer:
 
     def smart_recognize_all(
         self,
-        input_tuple: tuple,
+        text: str,
         intents: Intents,
         hass: HomeAssistant,
         slot_lists: Optional[dict[str, TextSlotList]] = None,
     ) -> list[LightRecognizeResult]:
         """Recognize the intent and fills the slots."""
-        (X, tokens) = input_tuple
+        tokens = preprocess_text(text)
         self.tokens = [[token] for token in tokens]
         bigrams = [list(ngram) for ngram in list(ngrams(tokens, 2))]
         trigrams = [list(ngram) for ngram in list(ngrams(tokens, 3))]
         self.ngrams = self.tokens + bigrams + trigrams
-        result = load_and_predict(X, "svc_linear__full_undersampling")
+        result = load_and_predict(text, "svc_linear__full_undersampling")
         _LOGGER.debug(result)
 
         maybe_matched_entities: list[MatchEntity] = []

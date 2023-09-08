@@ -26,12 +26,12 @@ from .models import classifiers
 _LOGGER = logging.getLogger(__name__)
 
 
-def load_and_predict(X, model_name):
+def load_and_predict(text, model_name):
     """Load model and predict output."""
     result = {}
     model_file_path, model_file_info = get_models_metadata(model_name, "Intent")
     model = load(model_file_path)
-    result["Intent"] = model.predict(X)[0]
+    result["Intent"] = model.predict([text])[0]
     for slot in SLOTS[result["Intent"]]:
         if not (slot == "State" and result.get("Response", "") == "one") and not (
             slot == "DeviceClass" and result["Domain"] != "cover"
@@ -40,7 +40,7 @@ def load_and_predict(X, model_name):
             model = load(model_file_path)
             if slot.startswith("Response"):
                 slot = "Response"
-            result[slot] = model.predict(X)[0]
+            result[slot] = model.predict([text])[0]
     return result
 
 

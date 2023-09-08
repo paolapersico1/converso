@@ -52,7 +52,7 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
-from .intent_recognition.data_preprocessing import full_text_preprocess
+from .intent_recognition.data_preprocessing import preprocess_text
 from .recognition import IntentRecognizer, LightRecognizeResult
 from .speech_correction import SpeechCorrector
 from .word2vec.word2vec import Word2Vec
@@ -330,7 +330,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
         # Prioritize matches with entity names above area names
         maybe_result: list[LightRecognizeResult] | None = None
 
-        X, tokens = full_text_preprocess(self.w2v, user_input.text)
+        X, tokens = preprocess_text(user_input.text)
         custom_names: set[str] = {
             str(text_slot_value.text_in)
             for text_slot_value in slot_lists.get(
@@ -345,10 +345,11 @@ class ConversoAgent(agent.AbstractConversationAgent):
         }
 
         self.speech_corrector.add_custom(custom_names.union(custom_areas))
+        text = self.speech_corrector.correct(user_input.text)
         _LOGGER.debug(self.speech_corrector.domain_vocab)
 
         maybe_result = self.intent_recognizer.smart_recognize_all(
-            (X, tokens),
+            text,
             lang_intents.intents,
             self.hass,
             slot_lists=slot_lists,

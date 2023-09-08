@@ -120,9 +120,9 @@ def generate_artificial_dataset(dataset_file_path):
     Light[NUM=sg, GEN=f] -> 'luce' | 'lampada'
     Light[NUM=pl, GEN=f] -> 'luci' | 'lampade'
     Fan[NUM=sg, GEN=f] -> 'ventola' | 'ventilazione'
-    Fan[NUM=sg, GEN=m, ART=il] -> 'ventilatore' | 'climatizzatore' | 'condizionatore'
+    Fan[NUM=sg, GEN=m, ART=il] -> 'ventilatore' | 'aeratore' | 'ventilatore a soffitto'
     Fan[NUM=pl, GEN=f] -> 'ventole'
-    Fan[NUM=pl, GEN=m, ART=il] -> 'ventilatori' | 'climatizzatori' | 'condizionatori'
+    Fan[NUM=pl, GEN=m, ART=il] -> 'ventilatori' | 'aeratori' | 'ventilatori a soffitto'
     Awning[NUM=sg, GEN=f] -> 'tenda da sole'
     Awning[NUM=pl, GEN=f] -> 'tende da sole'
     Blind[NUM=sg, GEN=f] -> 'persiana'
@@ -327,7 +327,7 @@ def generate_artificial_dataset(dataset_file_path):
     Climate_Set -> Change Temp WhereOf Into Temperature | Change Into Temperature Temp WhereOf
 
     Climate[NUM=?n, GEN=?g, ART=?a] -> Name[NUM=?n, GEN=?g, ART=?a]
-    Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'termostato' | 'termosifone'
+    Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'condizionatore' | 'termosifone'
     Climate[NUM=sg, GEN=f] -> 'valvola termostatica'
     Temperature -> NumTemp | NumTemp TempUnitSymbol |  NumTempInt 'e mezzo' | NumTempInt TempUnitSymbol 'e mezzo'
     NumTempInt -> """

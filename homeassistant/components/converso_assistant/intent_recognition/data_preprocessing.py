@@ -110,12 +110,14 @@ def preprocess_text(text):
     text = re.sub(r"([\w])[']([\w])", r"\1' \2", text)
     text = text.lstrip()
     text = text.rstrip()
+    text = re.sub(r"([0-9])\.([0-9])", r"\1FRACDOT\2", text)
     text = text.replace(".", " .")
 
     while "DOTDOTMULTI" in text:
         text = text.replace("DOTDOTMULTI", "DOTMULTI.")
 
     text = text.replace("DOTMULTI", " .")
+    text = text.replace("FRACDOT", ".")
 
     tk = WhitespaceTokenizer()
 
@@ -143,14 +145,6 @@ def mean_embedding(w2v, token_list):
         axis=0,
     )
     return result
-
-
-def full_text_preprocess(w2v, text):
-    """Return a dataframe with a vector representation of a text and the list of tokens."""
-    text = preprocess_text(text)
-    df = pd.DataFrame(columns=["v_" + str(i) for i in range(w2v.w2v_dim)])
-    df.loc[0] = mean_embedding(w2v, text).tolist()
-    return df, text
 
 
 def get_word2vec_dataset(df, w2v):
