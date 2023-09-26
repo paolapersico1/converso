@@ -10,10 +10,14 @@ data/
 
 # Translations
 homeassistant/components/*/translations
+
 homeassistant/components/converso_assistant/intent_recognition/datasets
 homeassistant/components/converso_assistant/intent_recognition/trained_models
-homeassistant/components/converso_assistant/it.word.top_unigrams_prob.csv
-homeassistant/components/converso_assistant/it.word.top_bigrams_prob.csv
+homeassistant/components/converso_assistant/intent_recognition/new_datasets
+homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.csv
+homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.joblib
+homeassistant/components/converso_assistant/ngrams/it.word.top_unigrams_prob.csv
+homeassistant/components/converso_assistant/ngrams/it.word.top_bigrams_prob.csv
 homeassistant/components/converso_assistant/word2vec/cc.it.300.bin
 homeassistant/components/converso_assistant/word2vec/gensim_cc.it.300.bin
 homeassistant/components/converso_assistant/word2vec/cc.it.300.vec

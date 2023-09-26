@@ -71,10 +71,10 @@ def generate_artificial_dataset(dataset_file_path):
     """Generate smart home commands from a context-free grammar."""
     number1to100_strings = ["'" + str(i) + "'" for i in range(0, 101, 5)]
     numbers1to100 = reduce(lambda x, y: x + " | " + y, number1to100_strings)
-    number15to25_strings = ["'" + str(i) + "'" for i in range(15, 26)]
-    numbers15to25 = reduce(lambda x, y: x + " | " + y, number15to25_strings)
-    number15to25_half_strings = ["'" + str(i) + "'" for i in np.arange(15.5, 26.5, 1)]
-    numbers15to25_half = reduce(lambda x, y: x + " | " + y, number15to25_half_strings)
+    number18to25_strings = ["'" + str(i) + "'" for i in range(18, 26)]
+    numbers18to25 = reduce(lambda x, y: x + " | " + y, number18to25_strings)
+    number18to25_half_strings = ["'" + str(i) + "'" for i in np.arange(18.5, 26.5, 1)]
+    numbers18to25_half = reduce(lambda x, y: x + " | " + y, number18to25_half_strings)
     colors = reduce(lambda x, y: x + " | " + y, ["'" + str(i) + "'" for i in COLORS])
     g = (
         """
@@ -83,10 +83,10 @@ def generate_artificial_dataset(dataset_file_path):
     % start S
 
     S -> Intent
-    Intent -> HassGetState
-    HassTurnOn -> Light_TurnOn | Fan_TurnOn | Cover_Open | Entity_TurnOn
-    HassTurnOff -> Light_TurnOff | Fan_TurnOff | Cover_Close | Entity_TurnOff
-    HassGetState -> Cover_Get | Entity_Get
+    Intent -> HassClimateSetTemperature
+    HassTurnOn -> Light_TurnOn | Fan_TurnOn | Climate_TurnOn | Cover_Open | Entity_TurnOn
+    HassTurnOff -> Light_TurnOff | Fan_TurnOff | Climate_TurnOff |  Cover_Close | Entity_TurnOff
+    HassGetState -> Cover_Get| Entity_Get
     HassLightSet -> Light_SetBrightness | Light_SetColor
     HassClimateGetTemperature -> Climate_Get
     HassClimateSetTemperature -> Climate_Set
@@ -117,16 +117,16 @@ def generate_artificial_dataset(dataset_file_path):
     CloseState[NUM=pl, GEN=m] -> 'chiusi'
     CloseState[NUM=pl, GEN=f] -> 'chiuse'
 
-    Light[NUM=sg, GEN=f] -> 'luce' | 'lampada'
-    Light[NUM=pl, GEN=f] -> 'luci' | 'lampade'
+    Light[NUM=sg, GEN=f] -> 'luce'
+    Light[NUM=pl, GEN=f] -> 'luci'
     Fan[NUM=sg, GEN=f] -> 'ventola' | 'ventilazione'
-    Fan[NUM=sg, GEN=m, ART=il] -> 'ventilatore' | 'aeratore' | 'ventilatore a soffitto'
+    Fan[NUM=sg, GEN=m, ART=il] -> 'ventilatore'
     Fan[NUM=pl, GEN=f] -> 'ventole'
-    Fan[NUM=pl, GEN=m, ART=il] -> 'ventilatori' | 'aeratori' | 'ventilatori a soffitto'
+    Fan[NUM=pl, GEN=m, ART=il] -> 'ventilatori'
     Awning[NUM=sg, GEN=f] -> 'tenda da sole'
     Awning[NUM=pl, GEN=f] -> 'tende da sole'
-    Blind[NUM=sg, GEN=f] -> 'persiana'
-    Blind[NUM=pl, GEN=f] -> 'persiane'
+    Blind[NUM=sg, GEN=f] -> 'tapparella'
+    Blind[NUM=pl, GEN=f] -> 'tapparelle'
     Curtain[NUM=sg, GEN=f] -> 'tenda'
     Curtain[NUM=pl, GEN=f] -> 'tende'
     Door[NUM=sg, GEN=f] -> 'porta'
@@ -138,24 +138,21 @@ def generate_artificial_dataset(dataset_file_path):
     Gate[NUM=pl, GEN=m, ART=il] -> 'cancelli'
     Shade[NUM=sg, GEN=f] -> 'veneziana'
     Shade[NUM=pl, GEN=f] -> 'veneziane'
-    Shutter[NUM=sg, GEN=f] -> 'tapparella'
-    Shutter[NUM=pl, GEN=f] -> 'tapparelle'
+    Shutter[NUM=sg, GEN=f] -> 'persiana'
+    Shutter[NUM=pl, GEN=f] -> 'persiane'
     Window[NUM=sg, GEN=f] -> 'finestra'
     Window[NUM=pl, GEN=f] -> 'finestre'
 
-    TurnOn -> 'accendi' | CanYouDo 'accendere' | 'attiva' | CanYouDo 'attivare' | 'attacca' | CanYouDo 'attaccare'
-    TurnOff -> 'spegni' | CanYouDo 'spegnere' | 'disattiva' | CanYouDo 'disattivare' | 'stacca' | CanYouDo 'staccare'
-    Open -> 'apri' | CanYouDo 'aprire'
-    Close -> 'chiudi' | CanYouDo 'chiudere'
-    Set -> 'imposta' | CanYouDo 'impostare'
-    Change ->  'cambia' | CanYouDo 'cambiare'
+    TurnOn -> 'accendi'
+    TurnOff -> 'spegni'
+    Open -> 'apri'
+    Close -> 'chiudi'
+    Set -> 'imposta'
     Area[NUM=sg, GEN=f] -> 'cucina' | 'camera da letto'
     Area[NUM=sg, GEN=m, ART=il] -> 'bagno' | 'salotto'
     Area[NUM=sg, GEN=m, ART=lo] -> 'studio'
-    Name -> 'custom_name'
+    Name -> 'custom_name' | 'custom_name 2' | 'custom_name 3'
 
-    CanYouDo -> 'potresti' | 'puoi'
-    CanYouTell -> 'dimmi' | 'puoi dirmi'
     A[NUM=sg, GEN=m, ART=il] -> 'un'
     A[NUM=sg, GEN=m, ART=lo] -> 'uno'
     A[NUM=sg, GEN=f] -> 'una'
@@ -197,77 +194,67 @@ def generate_artificial_dataset(dataset_file_path):
     What[NUM=pl] -> 'quali'
     HowMany[GEN=m] -> 'quanti'
     HowMany[GEN=f] -> 'quante'
+    CanYouTell -> 'dimmi' | 'puoi dirmi'
     TellIf -> CanYouTell 'se'
     Every[GEN=m] -> 'tutti'
     Every[GEN=f] -> 'tutte'
     Where -> In[NUM=sg, GEN=?g, ART=?a] Area[GEN=?g, ART=?a]
     WhereOf -> Where | Of[NUM=sg, GEN=?g, ART=?a] Area[GEN=?g, ART=?a]
 
-    Entity_TurnOn -> TurnOn EntitySubject
-    Entity_TurnOff -> TurnOff EntitySubject
+    Entity_TurnOn -> TurnOn EntitySubject | Open EntitySubject
+    Entity_TurnOff -> TurnOff EntitySubject | Close EntitySubject
 
     Entity_Get -> One | One_YesNo | Any | All | Which | How_Many
 
-    One ->  CanYouTell OneQuestion | OneQuestion
-    OneQuestion -> 'qual è lo stato' Of[NUM=?n, GEN=?g, ART=?a] Name | 'qual è il valore' Of[NUM=?n, GEN=?g, ART=?a] Name
+    One ->  'qual è lo stato' Of[NUM=?n, GEN=?g, ART=?a] Name | 'qual è il valore' Of[NUM=?n, GEN=?g, ART=?a] Name
 
-    One_YesNo -> TellIf OneYesNoQuestion | OneYesNoQuestion
-    OneYesNoQuestion -> EntitySubject[NUM=?n, GEN=?n, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
-    OneYesNoQuestion -> Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] EntitySubject[NUM=?n, GEN=?n, ART=?a]
-    OneYesNoQuestion -> EntitySubject[NUM=?n, GEN=?n, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] Where
-    OneYesNoQuestion -> Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] EntitySubject[NUM=?n, GEN=?n, ART=?a] Where
-    OneYesNoQuestion -> EntitySubject[NUM=?n, GEN=?n, ART=?a] WhereOf Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
+    One_YesNo -> EntitySubject[NUM=?n, GEN=?n, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
+    One_YesNo -> Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] EntitySubject[NUM=?n, GEN=?n, ART=?a]
+    One_YesNo -> EntitySubject[NUM=?n, GEN=?n, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] Where
+    One_YesNo -> Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] EntitySubject[NUM=?n, GEN=?n, ART=?a] Where
+    One_YesNo -> EntitySubject[NUM=?n, GEN=?n, ART=?a] WhereOf Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
 
-    Any -> TellIf AnyQuestion | AnyQuestion
-    AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] OnOffState[NUM=?n, GEN=?g]
-    AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] WhereOf OnOffState[NUM=?n, GEN=?g]
-    AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] OnOffState[NUM=?n, GEN=?g] Where
+    Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] OnOffState[NUM=?n, GEN=?g]
+    Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] WhereOf OnOffState[NUM=?n, GEN=?g]
+    Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] OnOffDomain[NUM=?n, GEN=?g, ART=?a] OnOffState[NUM=?n, GEN=?g] Where
 
-    All -> TellIf AllQuestion | AllQuestion
-    AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
-    AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
-    AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g] Where
+    All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
+    All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
+    All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g] Where
 
-    Which -> CanYouTell WhichQuestion | WhichQuestion
-    WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
-    WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
-    WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] Where
+    Which -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
+    Which -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OnOffState[NUM=?n, GEN=?g]
+    Which -> What[NUM=?n] OnOffDomain[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OnOffState[NUM=?n, GEN=?g] Where
 
-    How_Many -> CanYouTell HowManyQuestion | HowManyQuestion
-    HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
-    HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
-    HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g] Where
+    How_Many -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
+    How_Many -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OnOffState[NUM=pl, GEN=?g]
+    How_Many -> HowMany[GEN=?g] OnOffDomain[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OnOffState[NUM=pl, GEN=?g] Where
 
     EntitySubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=sg, GEN=?g, ART=?a] Name[NUM=sg, GEN=?g, ART=?a]
 
     Cover_Get -> Cover_One_YesNo | Cover_Any | Cover_All | Cover_Which | Cover_How_Many
 
-    Cover_One_YesNo -> TellIf Cover_OneYesNoQuestion | Cover_OneYesNoQuestion
-    Cover_OneYesNoQuestion -> CoverSubject[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
-    Cover_OneYesNoQuestion -> Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] CoverSubject[NUM=?n, GEN=?g, ART=?a]
-    Cover_OneYesNoQuestion -> InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] Where
-    Cover_OneYesNoQuestion -> Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] Where
-    Cover_OneYesNoQuestion -> InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
+    Cover_One_YesNo -> CoverSubject[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
+    Cover_One_YesNo -> Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] CoverSubject[NUM=?n, GEN=?g, ART=?a]
+    Cover_One_YesNo -> InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] Where
+    Cover_One_YesNo -> Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] Where
+    Cover_One_YesNo -> InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
 
-    Cover_Any -> TellIf Cover_AnyQuestion | Cover_AnyQuestion
-    Cover_AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] Cover[NUM=?n, GEN=?g, ART=?a] OpenCloseState[NUM=?n, GEN=?g]
-    Cover_AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a] WhereOf OpenCloseState[NUM=?n, GEN=?g]
-    Cover_AnyQuestion[NUM=?n, GEN=?g, ART=?a] -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a] OpenCloseState[NUM=?n, GEN=?g] Where
+    Cover_Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] Cover[NUM=?n, GEN=?g, ART=?a] OpenCloseState[NUM=?n, GEN=?g]
+    Cover_Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a] WhereOf OpenCloseState[NUM=?n, GEN=?g]
+    Cover_Any -> ThereIs[NUM=?n] A[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a] OpenCloseState[NUM=?n, GEN=?g] Where
 
-    Cover_All -> TellIf Cover_AllQuestion | Cover_AllQuestion
-    Cover_AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] Cover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
-    Cover_AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] InteriorCover[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
-    Cover_AllQuestion[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] InteriorCover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g] Where
+    Cover_All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] Cover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
+    Cover_All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] InteriorCover[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
+    Cover_All -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] InteriorCover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g] Where
 
-    Cover_Which -> CanYouTell Cover_WhichQuestion | Cover_WhichQuestion
-    Cover_WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] Cover[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
-    Cover_WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] InteriorCover[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
-    Cover_WhichQuestion[NUM=?n, GEN=?g, ART=?a] -> What[NUM=?n] InteriorCover[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] Where
+    Cover_Which -> What[NUM=?n] Cover[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
+    Cover_Which -> What[NUM=?n] InteriorCover[NUM=?n, GEN=?g, ART=?a] WhereOf Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g]
+    Cover_Which -> What[NUM=?n] InteriorCover[NUM=?n, GEN=?g, ART=?a] Is[NUM=?n] OpenCloseState[NUM=?n, GEN=?g] Where
 
-    Cover_How_Many -> CanYouTell Cover_HowManyQuestion | Cover_HowManyQuestion
-    Cover_HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] Cover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
-    Cover_HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
-    Cover_HowManyQuestion[NUM=?n, GEN=?g, ART=?a] -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g] Where
+    Cover_How_Many -> HowMany[GEN=?g] Cover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
+    Cover_How_Many -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] WhereOf Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g]
+    Cover_How_Many -> HowMany[GEN=?g] InteriorCover[NUM=pl, GEN=?g, ART=?a] Is[NUM=pl] OpenCloseState[NUM=pl, GEN=?g] Where
 
     CoverSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] Cover[NUM=?n, GEN=?g, ART=?a]
     InteriorCoverSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] InteriorCover[NUM=?n, GEN=?g, ART=?a]
@@ -275,17 +262,13 @@ def generate_artificial_dataset(dataset_file_path):
     Light_TurnOn -> TurnOn LightSubject | TurnOn LightSubject WhereOf
     Light_TurnOff -> TurnOff LightSubject | TurnOff LightSubject WhereOf
 
-    Light_SetBrightness -> Set Brightness WhereOf Onto Percentage | Set Onto Percentage Brightness WhereOf
-    Light_SetBrightness -> Set Brightness Onto Percentage | Set Onto Percentage Brightness
-    Light_SetBrightness -> Change Brightness Into Percentage | Change Into Percentage Brightness
-    Light_SetBrightness -> Change Brightness WhereOf Into Percentage | Change Into Percentage Brightness WhereOf
-    Brightness ->  The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=?g, ART=?a] Name
+    Light_SetBrightness ->  Set Brightness WhereOf Onto Percentage | Set Onto Percentage Brightness WhereOf
+    Light_SetBrightness -> Set Brightness Onto Percentage | Set Onto Percentage Brightness | TurnOn LightSubject Onto Percentage
+    Brightness ->  The[NUM=sg, GEN=f] 'luminosità' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=sg, GEN=f] Light[NUM=?n, GEN=f]
 
-    Light_SetColor ->  Set Color Onto ColorValue | Set Onto ColorValue Color
-    Light_SetColor ->  Change Color Into ColorValue | Change Into ColorValue Color
+    Light_SetColor ->  Set Color Onto ColorValue | Set Onto ColorValue Color  | TurnOn LightSubject Onto ColorValue
     Light_SetColor ->  Set Color WhereOf Onto ColorValue | Set Onto ColorValue Color WhereOf
-    Light_SetColor ->  Change Color WhereOf Into ColorValue | Change Into ColorValue Color WhereOf
-    Color ->  The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=?g, ART=?a] Name
+    Color ->  The[NUM=sg, GEN=m, ART=il] 'colore' Of[NUM=?n, GEN=f] Light[NUM=?n, GEN=f] | The[NUM=?n, GEN=f] Light[NUM=?n, GEN=f]
     ColorValue -> """
         + colors
         + """
@@ -298,6 +281,12 @@ def generate_artificial_dataset(dataset_file_path):
 
     FanSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] Fan[NUM=?n, GEN=?g, ART=?a] | Fan[NUM=?n, GEN=?g, ART=?a]
     FanSubject[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] Fan[NUM=pl, GEN=?g, ART=?a]
+
+    Climate_TurnOn -> TurnOn ClimateSubject | TurnOn ClimateSubject WhereOf
+    Climate_TurnOff -> TurnOff ClimateSubject | TurnOff ClimateSubject WhereOf
+
+    ClimateSubject[NUM=?n, GEN=?g, ART=?a] -> The[NUM=?n, GEN=?g, ART=?a] Climate[NUM=?n, GEN=?g, ART=?a] | Climate[NUM=?n, GEN=?g, ART=?a]
+    ClimateSubject[NUM=pl, GEN=?g, ART=?a] -> Every[GEN=?g] The[NUM=pl, GEN=?g, ART=?a] Climate[NUM=pl, GEN=?g, ART=?a]
 
     Cover_Open -> Open CoverSubjects | Open InteriorCoverSubjects WhereOf
     Cover_Close -> Close CoverSubjects | Close InteriorCoverSubjects WhereOf
@@ -316,29 +305,26 @@ def generate_artificial_dataset(dataset_file_path):
 
     Climate_Get -> CanYouTell ClimateGetQuestion | ClimateGetQuestion  |  CanYouTell The[NUM=pl, GEN=m, ART=il] TempUnit WhereOf
     ClimateGetQuestion -> WhatIs Temp WhereOf | "che temperatura c'è" Where | HowHotCold Where
-    HowHotCold -> 'quanto fa' HotCold | 'quanto' HotCold 'fa' | "quanto c'è" HotCold
+    HowHotCold -> 'se fa' HotCold | 'quanto fa' HotCold | 'quanto' HotCold 'fa' | "quanto c'è" HotCold
     HowHotCold -> 'quanto' HotCold "c'è" | 'quanti' TempUnit 'ci sono'
     HotCold -> 'caldo' | 'freddo'
 
     Climate_Set -> Set Temp Onto Temperature | Set Onto Temperature Temp
     Climate_Set -> Set Temp WhereOf Onto Temperature | Set Onto Temperature Temp
     Climate_Set -> Set NumTemp TempUnit Where | Set Where Temp 'di' Temperature
-    Climate_Set -> Change Temp Into Temperature | Change Into Temperature Temp
-    Climate_Set -> Change Temp WhereOf Into Temperature | Change Into Temperature Temp WhereOf
 
-    Climate[NUM=?n, GEN=?g, ART=?a] -> Name[NUM=?n, GEN=?g, ART=?a]
     Climate[NUM=sg, GEN=m, ART=il] -> 'riscaldamento' | 'condizionatore' | 'termosifone'
     Climate[NUM=sg, GEN=f] -> 'valvola termostatica'
     Temperature -> NumTemp | NumTemp TempUnitSymbol |  NumTempInt 'e mezzo' | NumTempInt TempUnitSymbol 'e mezzo'
     NumTempInt -> """
-        + numbers15to25
+        + numbers18to25
         + """
     NumTempHalf -> """
-        + numbers15to25_half
+        + numbers18to25_half
         + """
     NumTemp -> NumTempInt | NumTempHalf
     Temp ->  The[NUM=sg, GEN=f] 'temperatura' | The[NUM=sg, GEN=f] 'temperatura' Of[NUM=?n, GEN=?g, ART=?a] Climate[NUM=?n, GEN=?g, ART=?a]
-    TempUnit -> 'gradi' | 'gradi celsius' | 'gradi centigradi'
+    TempUnit -> 'gradi'
     TempSymbol ->  '°' | '°C'
     TempUnitSymbol -> TempUnit | TempSymbol
 
@@ -441,7 +427,7 @@ def generate_artificial_dataset(dataset_file_path):
                 text = text + "?"
 
             text = text.replace(".0", "")
-            _LOGGER.info(str(i) + " " + text)
+            _LOGGER.debug(str(i) + " " + text)
 
             row = pd.DataFrame(
                 {

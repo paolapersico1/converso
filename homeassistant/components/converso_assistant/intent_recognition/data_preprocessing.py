@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from .const import DATASETS_DIR, SLOTS, USE_SAVED_DATASETS
+from .const import DATASETS_DIR, NUMBER_DICT, SLOTS, USE_SAVED_DATASETS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -121,7 +121,9 @@ def preprocess_text(text):
 
     tk = WhitespaceTokenizer()
 
-    return tk.tokenize(text)
+    sequence = [str(NUMBER_DICT.get(token, token)) for token in tk.tokenize(text)]
+
+    return sequence
 
 
 def remove_stopwords(series):
@@ -149,7 +151,6 @@ def mean_embedding(w2v, token_list):
 
 def get_word2vec_dataset(df, w2v):
     """Return a word2vec dataset."""
-    _LOGGER.info("Creating a new word2vec dataset")
     df["Text"] = df["Text"].apply(
         lambda line: mean_embedding(w2v, line.strip("][").split(",")).tolist()
     )

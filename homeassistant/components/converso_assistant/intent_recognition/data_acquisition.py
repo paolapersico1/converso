@@ -52,7 +52,7 @@ def load_synthetic_dataset(filename="synthetic_dataset.csv"):
                 "Temperature": "float32",
                 "Brightness": "float32",
             },
-        )
+        ).reset_index(drop=True)
 
         df_without_stopwords = df.copy()
         tokenized_texts = df_without_stopwords["Text"].apply(

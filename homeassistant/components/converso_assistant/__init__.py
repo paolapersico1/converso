@@ -52,8 +52,7 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
-from .intent_recognition.data_preprocessing import preprocess_text
-from .recognition import IntentRecognizer, LightRecognizeResult
+from .recognition import IntentRecognizer, SmartRecognizeResult
 from .speech_correction import SpeechCorrector
 from .word2vec.word2vec import Word2Vec
 
@@ -169,9 +168,12 @@ class ConversoAgent(agent.AbstractConversationAgent):
         self._trigger_sentences: list[TriggerData] = []
         self._trigger_intents: Intents | None = None
 
+        self.with_correction = False
         self.w2v = Word2Vec(dim=100)
         self.intent_recognizer = IntentRecognizer(self.w2v)
         self.speech_corrector = SpeechCorrector()
+
+        _LOGGER.debug("Initialized Converso")
 
     @property
     def supported_languages(self) -> list[str]:
@@ -208,7 +210,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
 
     async def async_recognize(
         self, user_input: agent.ConversationInput
-    ) -> list[LightRecognizeResult] | None:
+    ) -> list[SmartRecognizeResult] | None:
         """Recognize intent from user input."""
         language = user_input.language or self.hass.config.language
         lang_intents = self._lang_intents.get(language)
@@ -226,8 +228,6 @@ class ConversoAgent(agent.AbstractConversationAgent):
             return None
 
         slot_lists = self._make_slot_lists()
-
-        # user_input.text = self.speech_corrector.correct(user_input.text)
 
         result = await self.hass.async_add_executor_job(
             self._recognize,
@@ -310,14 +310,15 @@ class ConversoAgent(agent.AbstractConversationAgent):
                     response_template = template.Template(
                         response_template_str, self.hass
                     )
-                    _LOGGER.debug(intent_response.unmatched_states)
+
                     speech = await self._build_speech(
                         language, response_template, intent_response, result
                     )
                     intent_response.async_set_speech(speech)
 
         return agent.ConversationResult(
-            response=intent_response, conversation_id=conversation_id
+            response=intent_response,
+            conversation_id=conversation_id,
         )
 
     def _recognize(
@@ -325,12 +326,11 @@ class ConversoAgent(agent.AbstractConversationAgent):
         user_input: agent.ConversationInput,
         lang_intents: LanguageIntents,
         slot_lists: dict[str, TextSlotList],
-    ) -> list[LightRecognizeResult] | None:
+    ) -> list[SmartRecognizeResult] | None:
         """Search intents for a match to user input."""
         # Prioritize matches with entity names above area names
-        maybe_result: list[LightRecognizeResult] | None = None
+        maybe_result: list[SmartRecognizeResult] | None = None
 
-        X, tokens = preprocess_text(user_input.text)
         custom_names: set[str] = {
             str(text_slot_value.text_in)
             for text_slot_value in slot_lists.get(
@@ -345,8 +345,10 @@ class ConversoAgent(agent.AbstractConversationAgent):
         }
 
         self.speech_corrector.add_custom(custom_names.union(custom_areas))
-        text = self.speech_corrector.correct(user_input.text)
-        _LOGGER.debug(self.speech_corrector.domain_vocab)
+        if self.with_correction:
+            text = self.speech_corrector.correct(user_input.text)
+        else:
+            text = user_input.text
 
         maybe_result = self.intent_recognizer.smart_recognize_all(
             text,
@@ -355,8 +357,6 @@ class ConversoAgent(agent.AbstractConversationAgent):
             slot_lists=slot_lists,
         )
 
-        _LOGGER.debug(maybe_result)
-
         return maybe_result
 
     async def _build_speech(
@@ -364,7 +364,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
         language: str,
         response_template: template.Template,
         intent_response: intent.IntentResponse,
-        recognize_result: LightRecognizeResult,
+        recognize_result: SmartRecognizeResult,
     ) -> str:
         # Make copies of the states here so we can add translated names for responses.
         matched: list[core.State] = []
@@ -381,6 +381,7 @@ class ConversoAgent(agent.AbstractConversationAgent):
                 unmatched.append(state_copy)
 
         all_states = matched + unmatched
+
         domains = {state.domain for state in all_states}
         translations = await translation.async_get_translations(
             self.hass, language, "entity_component", domains

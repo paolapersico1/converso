@@ -11,10 +11,7 @@ from homeassistant.const import ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, State
 from homeassistant.helpers import area_registry as ar, config_validation as cv, intent
 
-from .const import (
-    DOMAIN,
-    SERVICE_SET_TEMPERATURE,
-)
+from .const import DOMAIN, SERVICE_SET_TEMPERATURE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,7 +50,9 @@ class GetIntentHandler(intent.IntentHandler):
 
         # Optional domain/device class filters.
         # Convert to sets for speed.
-        domains: set[str] | None = None
+        domains: set[str] | None = {
+            "climate",
+        }
         device_classes: set[str] | None = None
 
         if "device_class" in slots:
@@ -63,11 +62,14 @@ class GetIntentHandler(intent.IntentHandler):
             intent.async_match_states(
                 hass,
                 area=area,
-                domains=("climate"),
+                domains=domains,
                 device_classes=device_classes,
                 assistant=intent_obj.assistant,
             )
         )
+
+        if not states:
+            raise intent.IntentHandleError
 
         _LOGGER.debug(
             "Found %s state(s) that matched: name=%s, area=%s, domains=%s, device_classes=%s, assistant=%s",

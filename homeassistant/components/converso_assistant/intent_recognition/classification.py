@@ -17,8 +17,8 @@ from .const import (
     SAMPLING,
     SAVE_MODELS,
     SLOTS,
-    STOP_WORD_REMOVAL,
     USE_SAVED_MODELS,
+    WORD2VEC_DIM,
 )
 from .data_preprocessing import W2VTransformer
 from .models import classifiers
@@ -26,25 +26,47 @@ from .models import classifiers
 _LOGGER = logging.getLogger(__name__)
 
 
-def load_and_predict(text, model_name):
+def load_and_predict(text, w2v):
     """Load model and predict output."""
     result = {}
-    model_file_path, model_file_info = get_models_metadata(model_name, "Intent")
-    model = load(model_file_path)
-    result["Intent"] = model.predict([text])[0]
-    for slot in SLOTS[result["Intent"]]:
-        if not (slot == "State" and result.get("Response", "") == "one") and not (
-            slot == "DeviceClass" and result["Domain"] != "cover"
-        ):
-            model_file_path, model_file_info = get_models_metadata(model_name, slot)
-            model = load(model_file_path)
-            if slot.startswith("Response"):
-                slot = "Response"
-            result[slot] = model.predict([text])[0]
+
+    embedder_without_sw = W2VTransformer(w2v, with_sw=False)
+    embedder_with_sw = W2VTransformer(w2v, with_sw=True)
+    embedding_without_sw = embedder_without_sw.transform([text])
+    embedding_with_sw = embedder_with_sw.transform([text])
+
+    intent_model = load(
+        path.join(
+            MODELS_DIR,
+            "best_models",
+            "Intent.joblib",
+        ),
+    )
+    try:
+        result["Intent"] = intent_model.predict(embedding_without_sw)[0]
+        for slot in SLOTS[result["Intent"]]:
+            if not (slot == "State" and result.get("Response", "") == "one") and not (
+                slot == "DeviceClass" and result["Domain"] != "cover"
+            ):
+                model = load(
+                    path.join(
+                        MODELS_DIR,
+                        "best_models",
+                        slot + ".joblib",
+                    ),
+                )
+                if slot.startswith("Response"):
+                    slot = "Response"
+                if slot == "ResponseHassGetState":
+                    result[slot] = model.predict(embedding_with_sw)[0]
+                else:
+                    result[slot] = model.predict(embedding_without_sw)[0]
+    except ValueError:
+        return None
     return result
 
 
-def generate_best_models(x_train, y_train, x_test, y_test, label, w2v):
+def generate_best_models(x_train, y_train, x_test, y_test, label, w2v, without_sw):
     """Load or generate the best models."""
     best_models = {}
 
@@ -52,7 +74,11 @@ def generate_best_models(x_train, y_train, x_test, y_test, label, w2v):
 
     for clf_name, model, params in models:
         model_name = clf_name
-        model_file_path, model_info_file_path = get_models_metadata(model_name, label)
+        if without_sw:
+            model_name = model_name + "__without_sw"
+        model_file_path, model_info_file_path = get_models_metadata(
+            clf_name, label, without_sw
+        )
 
         best_models[model_name] = {}
 
@@ -64,11 +90,11 @@ def generate_best_models(x_train, y_train, x_test, y_test, label, w2v):
             best_models[model_name]["model"] = load(model_file_path)
             result = pd.read_csv(model_info_file_path)
         else:
-            # cross-validate
-            result, current_model = grid_search(x_train, y_train, model, params, w2v)
+            result, current_model = grid_search(
+                x_train, y_train, model, params, w2v, without_sw
+            )
             best_models[model_name]["model"] = current_model
             if SAVE_MODELS:
-                # save the model
                 dump(current_model, model_file_path)
                 result.to_csv(model_info_file_path)
 
@@ -90,16 +116,14 @@ def generate_best_models(x_train, y_train, x_test, y_test, label, w2v):
     return best_models
 
 
-def grid_search(x_trainval, y_trainval, clf, params, w2v):
+def grid_search(x_trainval, y_trainval, clf, params, w2v, without_sw):
     """Perform grid search with different parameters."""
     if SAMPLING == "undersampling":
-        rs = RandomUnderSampler()
+        rs = RandomUnderSampler(random_state=42)
     else:
-        rs = RandomOverSampler()
-    if STOP_WORD_REMOVAL:
-        embedder = W2VTransformer(w2v)
-    else:
-        embedder = W2VTransformer(w2v, with_sw=False)
+        rs = RandomOverSampler(random_state=42)
+
+    embedder = W2VTransformer(w2v, with_sw=(not without_sw))
 
     pipeline = Pipeline(
         [
@@ -123,12 +147,13 @@ def grid_search(x_trainval, y_trainval, clf, params, w2v):
     return pd.DataFrame(gs.cv_results_), gs.best_estimator_
 
 
-def get_models_metadata(model_name, label):
+def get_models_metadata(model_name, label, without_sw):
     """Return model metadata."""
-    sw_removal = ""
-    if STOP_WORD_REMOVAL:
-        sw_removal = "without_sw"
-    model_file_name = label + "__" + model_name + "__" + SAMPLING + "__" + sw_removal
+    model_file_name = (
+        label + "__" + model_name + "__" + SAMPLING + "__" + str(WORD2VEC_DIM)
+    )
+    if without_sw:
+        model_file_name = model_file_name + "__without_sw"
     model_file_path = path.join(MODELS_DIR, model_file_name + ".joblib")
     model_info_file_path = path.join(MODELS_DIR, model_file_name + ".csv")
 
