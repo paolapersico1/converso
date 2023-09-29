@@ -14,6 +14,7 @@ homeassistant/components/*/translations
 homeassistant/components/converso_assistant/intent_recognition/datasets
 homeassistant/components/converso_assistant/intent_recognition/trained_models
 homeassistant/components/converso_assistant/intent_recognition/new_datasets
+!homeassistant/components/converso_assistant/intent_recognition/new_datasets/synthetic_dataset.csv
 homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.csv
 homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.joblib
 homeassistant/components/converso_assistant/ngrams/it.word.top_unigrams_prob.csv
