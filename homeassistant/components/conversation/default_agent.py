@@ -209,7 +209,6 @@ class DefaultAgent(AbstractConversationAgent):
 
         result = await self.async_recognize(user_input)
         lang_intents = self._lang_intents.get(language)
-
         if result is None:
             _LOGGER.debug("No intent was matched for '%s'", user_input.text)
             return _make_error_result(
@@ -218,6 +217,17 @@ class DefaultAgent(AbstractConversationAgent):
                 self._get_error_text(ResponseType.NO_INTENT, lang_intents),
                 conversation_id,
             )
+
+        labels = {}
+        if result.intent.name:
+            labels["Intent"] = result.intent.name
+        if result.response:
+            labels["Response"] = result.response
+        for label in ("state", "color", "brightness", "temperature"):
+            if label in result.entities:
+                labels[label.capitalize()] = result.entities[label].value
+            else:
+                labels[label.capitalize()] = ""
 
         # Will never happen because result will be None when no intents are
         # loaded in async_recognize.
@@ -270,8 +280,13 @@ class DefaultAgent(AbstractConversationAgent):
                 )
                 intent_response.async_set_speech(speech)
 
+        all_states = intent_response.matched_states + intent_response.unmatched_states
+
         return ConversationResult(
-            response=intent_response, conversation_id=conversation_id
+            response=intent_response,
+            conversation_id=conversation_id,
+            all_states=all_states,
+            labels=labels,
         )
 
     def _recognize(

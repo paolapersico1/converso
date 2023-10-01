@@ -5,10 +5,13 @@ import asyncio
 from collections.abc import Iterable
 from dataclasses import dataclass
 import logging
+from os import path
 import re
+import time
 from typing import Any, Literal
 
 from hassil.recognize import RecognizeResult
+import pandas as pd
 import voluptuous as vol
 
 from homeassistant import core
@@ -24,8 +27,10 @@ from homeassistant.loader import bind_hass
 from homeassistant.util import language as language_util
 
 from .agent import AbstractConversationAgent, ConversationInput, ConversationResult
-from .const import HOME_ASSISTANT_AGENT
+from .const import CONVERSATION_ROOT, HOME_ASSISTANT_AGENT
 from .default_agent import DefaultAgent, async_setup as async_setup_default_agent
+
+_LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     "DOMAIN",
@@ -458,21 +463,85 @@ async def async_converse(
     device_id: str | None = None,
 ) -> ConversationResult:
     """Process text and get intent."""
-    agent = await _get_agent_manager(hass).async_get_agent(agent_id)
+    converso_agent = await _get_agent_manager(hass).async_get_agent(
+        "7ec526e00178c15ee663034dcda62ff9"
+    )
+    default_agent = await _get_agent_manager(hass).async_get_agent("homeassistant")
 
     if language is None:
         language = hass.config.language
 
-    _LOGGER.debug("Processing in %s: %s", language, text)
-    result = await agent.async_process(
-        ConversationInput(
-            text=text,
-            context=context,
-            conversation_id=conversation_id,
-            device_id=device_id,
-            language=language,
-        )
+    file = "Dataset1"
+    df = pd.read_csv(
+        path.join(CONVERSATION_ROOT, "experiment_datasets", file + ".csv"),
+        sep=";",
+        header=0,
     )
+
+    labels = (
+        "Intent",
+        "Response",
+        "State",
+        "Color",
+        "Brightness",
+        "Temperature",
+    )
+
+    for atype in ("converso__", "default__"):
+        if atype == "converso__":
+            agent = converso_agent
+        else:
+            agent = default_agent
+
+        for ctype in (
+            "from_speech__",
+            "from_correction__",
+            "from_text__",
+        ):
+            columns: dict = {}
+            for label in labels:
+                columns[label] = []
+            columns["MatchedEntities"] = []
+            columns["CorrectedText"] = []
+            columns["Delay"] = []
+            columns["Error"] = []
+
+            for _index, row in df.iterrows():
+                start_time = time.time()
+                if ctype == "from_text__":
+                    text = row["Text"]
+                elif ctype == "from_speech__":
+                    text = row["OutputText"]
+                elif ctype == "from_correction__":
+                    text = converso_agent.speech_corrector.correct(row["OutputText"])  # type: ignore[attr-defined]
+                    columns["CorrectedText"].append(text)
+                result = await agent.async_process(
+                    ConversationInput(
+                        text=text,
+                        context=context,
+                        conversation_id=conversation_id,
+                        device_id=device_id,
+                        language=language,
+                    ),
+                )
+                columns["Error"].append(result.response.error_code)
+                columns["Delay"].append(time.time() - start_time)
+                for label in labels:
+                    columns[label].append(result.labels.get(label, ""))
+                columns["MatchedEntities"].append(
+                    [state.entity_id for state in result.all_states]
+                )
+            if ctype == "from_correction__":
+                df["CorrectedText"] = columns["CorrectedText"]
+            for label in labels:
+                df[atype + ctype + label] = columns[label]
+            df[atype + ctype + "MatchedEntities"] = columns["MatchedEntities"]
+            df[atype + ctype + "Delay"] = columns["Delay"]
+            df[atype + ctype + "Error"] = columns["Error"]
+    df.to_csv(
+        path.join(CONVERSATION_ROOT, "experiment_datasets", file + "_test.csv"), sep=";"
+    )
+
     return result
 
 

@@ -1,0 +1,72 @@
+OutputText;Text;Intent;MatchedEntities;Response;State;Color;Brightness;Temperature;Delay
+C'è in di luce a tibu.;accendi luce tv;HassTurnOn;['light.punto_luce_tv'];default;;;;;2.1216909465471154
+Accendi luce lumma.;accendi luce lume;HassTurnOn;['light.punto_luce_lume'];default;;;;;2.9093940328883967
+accendi luce radio;accendi luce radio;HassTurnOn;['light.punto_luce_radio'];default;;;;;1.8793094896309919
+Cendi lute forno.;accendi luce forno cucina;HassTurnOn;['light.punto_luce_forno'];default;;;;;2.4136190160159217
+Apri porta terrazzo.;apri porta terrazzo;HassTurnOn;['cover.porta_terrazza'];default;;;;;0.8953742406224234
+acendi lucia terrazzo;accendi luce terrazzo;HassTurnOn;['light.punto_luce_porta_1'];default;;;;;0.7013612858850309
+a riporta banyo 1.;apri porta bagno 1;HassTurnOn;['cover.porta_2'];default;;;;;1.3613017159805867
+Apri finestra bagno uno.;apri finestra bagno 1;HassTurnOn;['cover.finestra_3'];default;;;;;1.4154861307408884
+apri portacamera;apri porta camera;HassTurnOn;['cover.porta_1'];default;;;; ;0.8334457258589165
+Apri finestra camera.;apri finestra camera;HassTurnOn;['cover.finestra'];default;;;;;2.913058293725761
+Accendi luce, camera daletto.;accendi luce camera da letto;HassTurnOn;['light.punto_luce_porta_2'];default;;;;;1.4841745343951036
+A pri porta bagno 2.;apri porta bagno 2;HassTurnOn;['cover.porta_3'];default;;;;;2.209164947123785
+Apri finestra bagno 2.;apri finestra bagno 2;HassTurnOn;['cover.finestra_4'];default;;;;;0.9979161230025247
+apri porta cameretta;apri porta cameretta;HassTurnOn;['cover.porta_4'];default;;;;;2.6262581317055487
+apri finessi tra cameretta;apri finestra cameretta;HassTurnOn;['cover.finestra_4'];default;;;;;1.8487294573281996
+Accendi, luce, cameretta.;accendi luce cameretta;HassTurnOn;['light.punto_luce_porta_5'];default;;;;;2.6426628362891025
+A riporta ingresso.;apri porta ingresso;HassTurnOn;['cover.porta'];default;;;;;1.0170568318257938
+apri i tendini a terrazzo.;apri tendina terrazzo;HassTurnOn;['cover.tendina'];default;;;;;2.919511892704081
+Accendi condizionatore a sopra.;accendi condizionatore sopra;HassTurnOn;['climate.condizionatore_su'];default;;;;;1.7097378400913001
+a prie finestre.;apri finestre;HassTurnOn;['cover.finestra_1','cover.finestra_2','cover.finestra_cucina','cover.finestra','cover.finestra_3',cover.'finestra_4'];default;;;;;0.809173883465988
+accendile luci;accendi le luci;HassTurnOn;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1','light.punto_luce_forno','light.punto_luce_porta_2','light.punto_luce_porta_3','light.punto_luce_porta_4','light.punto_luce_porta_5','light.punto_luce_porta_6'];default;;;;;2.6014733845504137
+spenni luce di bu;spegni luce tv;HassTurnOff;['light.punto_luce_tv'];default;;;;;2.5595721189663747
+spenni luce lume;spegni luce lume;HassTurnOff;['light.punto_luce_lume'];default;;;;;2.4721107949268544
+spengli luce radio;spegni luce radio;HassTurnOff;['light.punto_luce_radio'];default;;;;;1.9688056365631965
+Spigni luce porta;spegni luce porta;HassTurnOff;['light.punto_luce_porta_1'];default;;;;;2.745416444243815
+chiudi finestra 1;chiudi finestra 1;HassTurnOff;['cover.finestra_1'];default;;;;;1.3833248617863108
+più di finesca 2;chiudi finestra 2;HassTurnOff;['cover.finestra_2'];default;;;;;1.9654648459864994
+chiudi porta in grasso;chiudi porta ingresso;HassTurnOff;['cover.porta'];cover_device_class_area;;;;;2.69869529373333
+chiudi porta terrazzo;chiudi porta terrazzo;HassTurnOff;['cover.porta_terrazza'];cover_device_class_area;;;;;2.7864387278893346
+più di finesca cucina;chiudi finestra cucina;HassTurnOff;['cover.finestra_cucina'];default;;;;;2.9879363806610515
+più di finestra bagno 1;chiudi finestra bagno 1;HassTurnOff;['cover.finestra_3'];default;;;;;1.5683329303834996
+Chiudi porta bagno uno;chiudi porta bagno 1;HassTurnOff;['cover.porta_2'];cover_device_class_area;;;;;2.8321104263824455
+più di fine sfra camera daletto;chiudi finestra camera da letto;HassTurnOff;['cover.finestra'];cover_device_class_area;;;;;2.1205366100966985
+più di porta camera daletto;chiudi porta camera da letto;HassTurnOff;['cover.porta_1'];cover_device_class_area;;;;;0.7298289558763439
+Spigni, luce e camera daletto.;spegni luce camera da letto;HassTurnOff;['light.punto_luce_porta_2'];default;;;;;1.0345289993345714
+Spiegnere l'uice camera.;spegni luce cameretta;HassTurnOff;['light.punto_luce_porta_5'];default;;;;;1.5496670401045605
+chiudi finestra cammeretta;chiudi finestra cameretta;HassTurnOff;['cover.finestra_5'];default;;;;;2.4399693178116135
+chiù di porta cameretta;chiudi porta cameretta;HassTurnOff;['cover.porta_4'];default;;;;;2.118796200180352
+Chiudi Finestra Bagnolo 2;chiudi finestra bagno 2;HassTurnOff;['cover.finestra_4'];default;;;;;2.5578757323453507
+spienghi luce banno 2;spegni luce bagno 2;HassTurnOff;['light.punto_luce_porta_4'];default;;;;;1.0823782329586225
+Chiudi porta banio 2;chiudi porta bagno 2;HassTurnOff;['cover.porta_3'];default;;;;;2.0798628858493724
+spiegni condizionatore a sopra;spegni condizionatore sopra;HassTurnOff;['climate.condizionatore_su'];default;;;;;1.749298848819028
+Accendi luce, ti vuo al 50%.;accendi luce tv al 50%;HassLightSet;['light.punto_luce_tv'];brightness;;;50.0;;0.846194150658721
+Accendi luce l'ume al 30%;accendi luce lume al 30%;HassLightSet;['light.punto_luce_lume'];brightness;;;30.0;;1.224694757847863
+Fendi luce radio al 20%;accendi luce radio al 20%;HassLightSet;['light.punto_luce_radio'];brightness;;;20.0;;1.5658109060544527
+Accende luce porta al 10%;accendi luce porta al 10%;HassLightSet;['light.punto_luce_porta_1'];brightness;;;10.0;;1.3574487862752953
+Accende luce cucina al 50%;accendi luce cucina al 50%;HassLightSet;['light.punto_luce_forno'];brightness;;;50.0;;1.8545904773484505
+Accendi tutte le luci al 100%;accendi tutte le luci al 100%;HassLightSet;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1','light.punto_luce_forno','light.punto_luce_porta_2','light.punto_luce_porta_3','light.punto_luce_porta_4','light.punto_luce_porta_5','light.punto_luce_porta_6'];brightness;;;100.0;;2.2113557531412775
+Accendi, area soggiorno al 50%;accendi area soggiorno al 50%;HassLightSet;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1'];brightness_area;;;50.0;;1.579902222909872
+Accendi luce bagno 1 al 30%.;accendi luce bagno 1 al 30%;HassLightSet;['light.punto_luce_porta_3'];brightness_area;;;30.0;;2.8955613780937184
+Accendilire il bagno 2 al 50%.;accendi luce bagno 2 al 50%;HassLightSet;['light.punto_luce_porta_4'];brightness_area;;;50.0;;1.246609049589221
+facendo il luce camera da letto al 30%;accendi luce camera da letto al 30%;HassLightSet;['light.punto_luce_porta_2'];brightness_area;;;30.0;;0.5977769673993998
+Accendi luce cameretta al 30%;accendi luce cameretta al 30%;HassLightSet;['light.punto_luce_porta_5'];brightness_area;;;30.0;;0.6684914404347906
+accendi il ventilatore;accendi il ventilatore;HassTurnOn;['ventilatore'];default;;;;;2.658626374257101
+spiegni il ventilatura.;spegni il ventilatore;HassTurnOff;['ventilatore'];default;;;;;0.5042410252550305
+Accendi condizionatore giù a 20 gradi.;accendi condizionatore giù a 20 gradi;HassClimateSetTemperature;['climate.condizionatore_giu'];default;;;20.0;;1.0176266741806392
+Accendi condizionatore a soggiorno abbienti gradi.;accendi condizionatore soggiorno a 20 gradi;HassClimateSetTemperature;['climate.condizionatore_giu'];default;;;20.0;;1.5339825228520096
+Accende condizionatore sopra 25°.;accendi condizionatore sopra a 25 gradi;HassClimateSetTemperature;['climate.condizionatore_su'];default;;;25.0;;2.4114847890574116
+accende luce tivu blue;accendi luce tv bleu;HassLightSet;['light.punto_luce_tv'];color;;Blu;;;0.6797771413145535
+Accendi luce l'ume rosso.;accendi luce lume rosso;HassLightSet;['light.punto_luce_lume'];color;;Rosso;;;2.2839262188508576
+accendi luce radio giallo;accendi luce radio giallo;HassLightSet;['light.punto_luce_radio'];color;;Giallo;;;1.04309484417168
+Accendi luce porta soggiorno verde.;accendi luce porta soggiorno verde;HassLightSet;['light.punto_luce_porta_1'];color;;Verde;;;1.3501054356735258
+che sono luce a ceza;ci sono luci accese;HassGetState;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1','light.punto_luce_forno','light.punto_luce_porta_2','light.punto_luce_porta_3','light.punto_luce_porta_4','light.punto_luce_porta_5','light.punto_luce_porta_6'];any;on;;;;1.4425853091397105
+Ci sono finestra aperte.;ci sono finestre aperte;HassGetState;['cover.finestra_1','cover.finestra_2','cover.finestra_3','cover.finestra_4','cover.finestra_5'];any;on;;;;2.310477886710753
+il gas é chiuto;il gas è chiuso;HassGetState;['gas_fornelli'];one_yesno;off;;;;2.6867228518717536
+le luti sono spente;le luci sono spente;HassGetState;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1','light.punto_luce_forno','light.punto_luce_porta_2','light.punto_luce_porta_3','light.punto_luce_porta_4','light.punto_luce_porta_5','light.punto_luce_porta_6'];all;off;;;;2.1956291419157505
+la tv espenta;la tv è spenta;HassGetState;['switch.tv'];one_yesno;off;;;;2.581580904450118
+la radio è accesa;la radio è accesa;HassGetState;['switch.radio'];one_yesno;on;;;;2.2479335164191547
+Quante luci sono eccese in soggiorno;quante luci sono accese in soggiorno;HassGetState;['light.punto_luce_tv','light.punto_luce_radio','light.punto_luce_lume','light.punto_luce_porta_1','light.punto_luce_forno','light.punto_luce_porta_2','light.punto_luce_porta_3','light.punto_luce_porta_4','light.punto_luce_porta_5','light.punto_luce_porta_6'];how_many;on;;;;1.0293836079581349
+Quante finestre sono aperte?;quante finestre sono aperte;HassGetState;['cover.finestra_1','cover.finestra_2','cover.finestra_3','cover.finestra_4','cover.finestra_5'];how_many;on;;;;0.7385517022143352
+quante porte sono aperte;quante porte sono aperte;HassGetState;['cover.porta','cover.porta_1','cover.porta_2','cover.porta_3','cover.porta_4'];how_many;on;;;;0.7611755267089686

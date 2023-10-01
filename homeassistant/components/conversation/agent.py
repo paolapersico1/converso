@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from homeassistant.core import Context
@@ -26,6 +26,8 @@ class ConversationResult:
 
     response: intent.IntentResponse
     conversation_id: str | None = None
+    all_states: list = field(default_factory=list)
+    labels: dict = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
         """Return result as a dict."""

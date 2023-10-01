@@ -52,6 +52,7 @@ from homeassistant.helpers.typing import ConfigType, EventType
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
 from .const import DEFAULT_EXPOSED_ATTRIBUTES, DOMAIN
+from .intent_recognition.const import COLORS
 from .recognition import IntentRecognizer, SmartRecognizeResult
 from .speech_correction import SpeechCorrector
 from .word2vec.word2vec import Word2Vec
@@ -260,6 +261,27 @@ class ConversoAgent(agent.AbstractConversationAgent):
                 conversation_id,
             )
 
+        labels = {}
+
+        result = results[0]
+
+        if result.intent_name:
+            labels["Intent"] = result.intent_name
+        if result.response:
+            labels["Response"] = result.response
+        for label in ("state", "color", "brightness", "temperature"):
+            if label in result.entities:
+                if label == "color":
+                    labels[label.capitalize()] = list(
+                        filter(
+                            lambda x: COLORS[x] == result.entities[label].value, COLORS
+                        )
+                    )[0]
+                else:
+                    labels[label.capitalize()] = result.entities[label].value
+            else:
+                labels[label.capitalize()] = ""
+
         # Will never happen because result will be None when no intents are
         # loaded in async_recognize.
         assert lang_intents is not None
@@ -316,9 +338,15 @@ class ConversoAgent(agent.AbstractConversationAgent):
                     )
                     intent_response.async_set_speech(speech)
 
+            all_states = (
+                intent_response.matched_states + intent_response.unmatched_states
+            )
+
         return agent.ConversationResult(
             response=intent_response,
             conversation_id=conversation_id,
+            labels=labels,
+            all_states=all_states,
         )
 
     def _recognize(

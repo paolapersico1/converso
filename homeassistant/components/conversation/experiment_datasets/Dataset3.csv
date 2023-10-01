@@ -1,0 +1,71 @@
+OutputText;Text;Intent;MatchedEntities;Response;State;Color;Brightness;Temperature;Delay
+apri dittenda camerina;apri tenda camerina;HassTurnOn;['cover.scuri_camerina'];default;;;;;0.6834315976789282
+Cendi camera;accendi camera;HassTurnOn;['light.camera_da_letto'];lights_area;;;;;2.6080543096634616
+Accendi, luci bagno principale;accendi luci bagno principale;HassTurnOn;['light.bagno'];lights_area;;;;;2.2071041410499608
+Accendi Camerina;accendi camerina;HassTurnOn;['light.camerina'];lights_area;;;;;0.6322752073876265
+accendi scala;accendi scala;HassTurnOn;['light.scala'];lights_area;;;;;1.3926902589569412
+accendi cucina;accendi cucina;HassTurnOn;['light.cucina'];lights_area;;;;;1.3663888690127175
+spiegni cucina;spegni cucina;HassTurnOff;['light.cucina'];lights_area;;;;;2.3269493131501298
+spenni scala;spegni scala;HassTurnOff;['light.scala'];lights_area;;;;;2.6922445009331177
+spenni cucina;spegni cucina;HassTurnOff;['light.cucina'];lights_area;;;;;2.7352906300835333
+spenni luce banjo principale;spegni luce bagno principale;HassTurnOff;['light.bagno'];lights_area;;;;;1.9280365477260446
+spenghi luce bagno principale;spegni luce bagno principale;HassTurnOff;['light.bagno'];lights_area;;;;;2.628052635040386
+Spenghi Camerina;spegni camerina;HassTurnOff;['light.camerina'];lights_area;;;;;1.9799418791815155
+spenni camera letto;spegni camera letto;HassTurnOff;['light.luce_cri'];lights_area;;;;;2.3856639942881257
+acendi lurci cri;accendi luci cri;HassTurnOn;['light.luce_cri'];lights_area;;;;;1.3822724171741698
+Accendi luce crei.;accendi luce cri;HassTurnOn;['light.luce_cri'];lights_area;;;;;2.8763404526795737
+Spenni luci kri!;spegni luce cri;HassTurnOff;['light.luce_cri'];lights_area;;;;;2.0148194740485086
+Accende il lucio e marco?;accendi luce marco;HassTurnOn;['light.luce_marco'];lights_area;;;;;0.6774841519936978
+Spegni luce Marco;spegni luce marco;HassTurnOff;['light.luce_marco'];lights_area;;;;;2.227822058214668
+Accendi Lucia Cri.;accendi luce cri;HassTurnOn;['light.luce_cri'];lights_area;;;;;1.7435386421506387
+accenni luce cristina;accendi luce cristina;HassTurnOn;['light.luce_cri'];lights_area;;;;;1.9042732432629208
+riscalda camera Giulia;riscalda camera giulia;HassTurnOn;['climate.condizionatore_camera_giulia'];default;;;;;2.146611464501822
+riscalda studiolo;riscalda studiolo;HassTurnOn;['climate.condizionatore_studio'];default;;;;;0.978453818801694
+Priscalda Salotto;riscalda salotto sopra;HassTurnOn;['climate.riscalda_soggiorno'];default;;;;;1.01440179460361
+metti a 23 gradi,camera letto;metti a 23 gradi camera letto;HassClimateSetTemperature;['climate.condizionatore_camera'];default;;;23.0;;2.2448720541321707
+Imposta 20 grandi soggiorno.;metti a 20 gradi soggiorno;HassClimateSetTemperature;['climate.riscalda_soggiorno'];default;;;20.0;;1.5400953683649925
+Imposta 20° Camerina;imposta 20° camerina;HassClimateSetTemperature;['climate.riscalda_soggiorno'];default;;;20.0;;2.022382308097737
+Imposta 19.5 studiola;imposta 19.5 studiolo;HassClimateSetTemperature;['climate.condizionatore_studio'];default;;;19.5;;2.9986864258341486
+Lucia cucina 80%;luce cucina 80%;HassLightSet;['light.cucina'];brightness_area;;;80.0;;0.8539259317669199
+Lucia e cucina 80%;luce cucina 80%;HassLightSet;['light.cucina'];brightness_area;;;80.0;;1.474738679004305
+Luce camera a letto 80%;luce camera da letto 80%;HassLightSet;['light.camera_da_letto'];brightness_area;;;80.0;;2.601080918291101
+Luce,bagno,50%;luce bagno 50%;HassLightSet;['light.bagno'];brightness_area;;;80.0;;1.5126626633923927
+Lucia e camera,lettu blue;luce camera da letto blu;HassLightSet;['light.camera_da_letto'];color_area;;Blu;;;0.886973338650517
+Lucce Blue Camera Letto;luce blu camera letto;HassLightSet;['light.camera_da_letto'];color_area;;Blu;;;0.6449555231686093
+Accendi condizionatore,camera,letto,21 gradi.;accendi condizionatore camera letto 21 gradi;HassClimateSetTemperature;['climate.condizionatore_camera'];default;;;21.0;;0.7506918634065236
+Accendi condissionatore e studiolo!;accendi condizionatore studiolo;HassTurnOn;['climate.condizionatore_studio];default;;;;;0.9678611748432329
+A Priporta Finestra;apriporta finestra;HassTurnOn;['cover.porta_finestra'];default;;;;;2.0083427008084893
+chiudi porta finestra.; chiudi porta finestra;HassTurnOff;['cover.porta_finestra'];default;;;;;2.108164249714216
+A pri lucernaio bano;apri lucernaio bagno;HassTurnOn;['cover.velux'];default;;;;;2.3863025655925494
+Apri finestra Giulia.;apri finestra giulia;HassTurnOn;['cover.finestra_camera_giulia'];default;;;;;2.8582716243903206
+Apri,porta vetri,soggiorno.;apri porta vetri soggiorno;HassTurnOn;['cover.porta_finestra'];default;;;;;1.9259008023459185
+Capri,porta finestra,soggiorno.;apri porta finestra soggiorno;HassTurnOn;['cover.porta_finestra'];default;;;;;0.9689063685546444
+chiudi porta fino a extra soggiorno;chiudi porta finestra soggiorno;HassTurnOff;['cover.porta_finestra'];default;;;;;0.6291084048484908
+Che temperatura c'è in soggiorno?;che temperatura c'è in soggiorno;HassClimateGetTemperature;['riscalda_soggiorno'];default;;;;;1.3087551404402045
+chiudi tutte le porte;chiudi tutte le porte;HassTurnOff;['cover.portone_garage','cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];cover_device_class;;;;;1.675000649551855
+Apri il lucernaio del banio.;apri il lucernaio del bagno;HassTurnOn;['cover.velux'];default;;;;;1.8712018450490548
+Apri lucernaio bagno;apri il lucernaio bagno;HassTurnOn;['cover.velux'];default;;;;;1.8667877490444336
+Aprei tutti gli scuri!;apri tutti gli scuri;HassTurnOn;['cover.scuri_cucina','cover.scuri_camerina','cover.scuri_camera_da_letto','cover.scuri_camerina','cover.scuri_studiolo','cover.scuri_salotto','cover.scuri_camera_giulia'];cover_device_class;;;;;1.606186864336606
+Dimmi la temperatura della camerina.;dimmi la temperatura della camerina;HassClimateGetTemperature;['cover.condizionatore_camerina'];default;;;;;2.2384524806692245
+A pre portone garaggi.;apri portone garage;HassTurnOn;['cover.portone_garage'];default;;;;;2.676359690749486
+Apri portone garage;apri portone garage;HassTurnOn;['cover.portone_garage'];default;;;;;1.680999649310077
+spegni tutte le luci;spegni tutte le luci;HassTurnOff;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv' 'light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];default;;;;;2.6823963352727986
+Dimmi tutte le porte apiarte.;dimmi tutte le porte aperte;HassGetState;['cover.portone_garage','cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];which;on;;;;0.6960412189233668
+dimmi le porte aperte;dimmi le porte aperte;HassGetState;['cover.portone_garage','cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];which;on;;;;2.5358820055929874
+dimmi quante porte aperte;dimmi quante porte aperte;HassGetState;['cover.portone_garage','cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];how_many;on;;;;1.9320870732738888
+Dimmi dove sono le porte apiarte.;dimmi dove sono le porte aperte;HassGetState;['cover.portone_garage','cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];which;on;;;;1.684870619074666
+Dimmi le finestre aperte.;dimmi le finestre aperte;HassGetState;[ 'cover.finestra_cucina','cover.finestra_camerina','cover.finestra_camera_da_letto','cover.finestra_bagno','cover.finestra_studiolo','cover.finestra_salotto','cover.finestra_cucina','cover.velux','cover.lucernaio'];which;on;;;;1.527751728181652
+Chiudi tutte le porte.;chiudi tutte le porte;HassTurnOff;['cover.portone_garage' 'cover.porta_ingresso','cover.porta_garage','cover.porta_giardino','cover.porta_finestra'];default;;;;;1.1529588280574616
+spenni tutte le luci;spegni tutte le luci;HassTurnOff;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];default;;;;;2.682379578116082
+Accendi le luci del piano terra.;accendi le luci del piano terra;HassTurnOn;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.antibagno_sotto','light.corridoio_sotto'];lights_area;;;;;2.6094964482010146
+Apreni gli scuri del piano terra.;apri gli scuri del piano terra;HassTurnOn;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];cover_device_class_area;;;;;1.3133480082256284
+dimmi i punti luce accesi;dimmi i punti luce accesi;HassGetState;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];which;on;;;;0.8462561067040035
+dimmi quanti punti luci accesi;dimmi quanti punti luce accesi;HassGetState;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];how_many;on;;;;1.0016591549315843
+Apriportone in grasso.;apri portone ingresso;HassTurnOn;['cover.porta_ingresso'];default;;;;;2.5963405796667853
+Apri portone ingresso.;apri portone ingresso;HassTurnOn;['cover.porta_ingresso'];default;;;;;0.8672235408397964
+e accesa la luce cucina;è accesa la luce cucina;HassGetState;['light.cucina'];one_yesno;on;;;;0.5162136085311942
+sono acese tutte le luci;sono accese tutte le luci;HassGetState;['light.cucina','light.camera_da_letto','light.bagno','light.camerina','light.luce_cri','light.luce_marco','light.tv','light.ingresso','light.tavolo','light.specchiera','light.loggia','light.lavatrice','light.luce_sotto_soppalco','light.luce_sopra_soppalco','light.luce_camerina','light.salottino','light.salotto','light.luce_principale','light.comodino_destro','light.comodino_sinistro','light.luce_principale_1','light.studio','light.antibagno_sotto','light.corridoio_sotto','light.antibagno','light.scala'];all;on;;;;0.993411433792206
+apri finestra cucina;apri finestra cucina;HassTurnOn;['cover.finestra_cucina'];default;;;;;2.1574106541518137
+Accendi la televisione.;accendi la televisione;HassTurnOn;['switch.tv'];default;;;;;1.8980033997874097
+Accendi l'aradio.;accendi la radio;HassTurnOn;['switch.radio'];default;;;;;1.424514287672575
+accendi radio;accendi radio;HassTurnOn;['switch.radio'];default;;;;;1.0815680673506554

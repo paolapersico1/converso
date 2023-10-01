@@ -1,0 +1,71 @@
+OutputText;Text;Intent;MatchedEntities;Response;State;Color;Brightness;Temperature;Delay
+accendi luce sala;accendi luce sala;HassTurnOn;['light.luce_sala'];lights_area;;;;;0.5076528066533604
+Spenni luce sala;spegni luce sala;HassTurnOff;['light.luce_sala'];lights_area;;;;;2.1243955049997254
+accendi luce cucina;accendi luce cucina;HassTurnOn;['light.luce_cucina'];lights_area;;;;;1.49098949405894
+spenni luce cucina;spegni luce cucina;HassTurnOff;['light.luce_cucina'];lights_area;;;;;1.5331398790727742
+accendi lucetivo.;accendi luce tv;HassTurnOn;['light.luce_tv'];lights_area;;;;;2.330387724714254
+spenni lucce tivu;spegni luce tv;HassTurnOff;['light.luce_tv'];lights_area;;;;;1.2181275215419363
+accendi ruce balcone;accendi luce balcone;HassTurnOn;['light.luce_balcone'];lights_area;;;;;2.026934355791119
+spenni luce balkone;spegni luce balcone;HassTurnOff;['light.luce_balcone'];lights_area;;;;;1.7202961648187807
+Accendiluce bagno uno;accendi luce bagno 1;HassTurnOn;['light.luce_bagno_1'];lights_area;;;;;0.5285858375068443
+spegni luce bagno 1;spegni luce bagno 1;HassTurnOff;['light.luce_bagno_1'];lights_area;;;;;2.5143649985463705
+accendi luce camera 1;accendi luce camera 1;HassTurnOn;['light.luce_camera_1'];lights_area;;;;;2.2457179228685846
+spengli uce camera uno;spegni luce camera 1;HassTurnOff;['light.luce_camera_1'];lights_area;;;;;2.197665131835815
+Pegni lucci camera dune.;spegni luce camera 2;HassTurnOff;['light.luce_camera_2'];lights_area;;;;;2.0706967016714994
+Accendi, lampada camera 2.;accendi lampada camera 2;HassTurnOn;['light.luce_camera_2'];lights_area;;;;;1.664775105732182
+Spenni luce, camera, due.;spegni luce camera 2;HassTurnOff;['light.luce_camera_2'];lights_area;;;;;2.6049614523427134
+Accendi uce, camera 3;accendi luce camera 3;HassTurnOn;['light.luce_camera_3'];lights_area;;;;;1.277797063598008
+spenni luce camera 3;spegni luce camera 3;HassTurnOff;['light.luce_camera_3'];lights_area;;;;;2.4502005681798287
+accendi luce, bagno, due.;accendi luce bagno 2;HassTurnOn;['light.luce_bagno_2'];lights_area;;;;;0.9168379229629191
+Spegni uce, bagno, due.;spegni luce bagno 2;HassTurnOff;['light.luce_bagno_2'];lights_area;;;;;2.6841816666905487
+accendi pavimento.;accendi pavimento;HassTurnOn;['climate.pavimento'];default;;;;;1.7224825880999888
+spegni, avimento;spegni pavimento;HassTurnOff;['climate.pavimento'];default;;;;;1.9879490995674973
+apri porta uno sala;apri porta 1 sala;HassTurnOn;['cover.porta_1'];cover_device_class_area;;;;;2.1938643640765285
+chiudi porta uno sala.;chiudi porta 1 sala;HassTurnOff;['cover.porta_1'];cover_device_class_area;;;;;1.932247303184425
+apri porta due sala;apri porta 2 sala;HassTurnOn;['cover.porta_2'];cover_device_class_area;;;;;1.4973714981275301
+chiudi porta due sala;chiudi porta 2 sala;HassTurnOff;['cover.porta_2'];cover_device_class_area;;;;;2.830003373997472
+apri scura uno sala;apri scuro 1 sala;HassTurnOn;['cover.scuro_1'];cover_device_class_area;;;;;1.4829060487931864
+chiude scuro uno sala;chiudi scuro 1 sala;HassTurnOn;['cover.scuro_1'];cover_device_class_area;;;;;2.185878028976725
+chiudi, scuro, uno sala.;chiudi scuro 1 sala;HassTurnOff;['cover.scuro_1'];cover_device_class_area;;;;;1.3069453972029308
+apri scuro due sala;apri scuro 2 sala;HassTurnOn;['cover.scuro_2'];cover_device_class_area;;;;;1.773228663302215
+spegni, scuro, due salano.;spegni scuro 2 sala;HassTurnOff;['cover.scuro_2'];cover_device_class_area;;;;;1.2458136028539852
+chiudi scuro 3 sala;chiudi scuro 3 sala;HassTurnOn;['cover.scuro_3'];cover_device_class_area;;;;;0.9288279091826672
+apri, scuro, tre sala.;apri scuro 3 sala;HassTurnOff;['cover.scuro_3'];cover_device_class_area;;;;;1.558037492656032
+apri, scuro, quattro, sala;apri scuro 4 sala;HassTurnOn;['cover.scuro_4'];cover_device_class_area;;;;;2.9166305471583214
+chiudi, scuro, quattro sala;chiudi scuro 4 sala;HassTurnOff;['cover.scuro_4'];cover_device_class_area;;;;;1.2086410414821298
+apri finestra uno sala;apri finestra 1 sala;HassTurnOn;['cover.finestra_1'];cover_device_class_area;;;;;2.078804450586869
+chiudo finestra uno sala.;chiudi finestra 1 sala;HassTurnOff;['cover.finestra_1'];cover_device_class_area;;;;;1.3702122000588548
+apri finestra 2 sala;apri finestra 2 sala;HassTurnOn;['cover.finestra_2'];cover_device_class_area;;;;;1.2982806978838437
+chiudi finestra 2 sala;chiudi finestra 2 sala;HassTurnOff;['cover.finestra_2'];cover_device_class_area;;;;;1.3951976259953058
+apri finestra 3 sala;apri finestra 3 sala;HassTurnOn;['cover.finestra_3'];cover_device_class_area;;;;;1.4507443959251964
+chiudi finestra 3 sala;chiudi finestra 3 sala;HassTurnOff;['cover.finestra_3'];cover_device_class_area;;;;;1.3753763658293432
+apri finestra quattro sala;apri finestra 4 sala;HassTurnOn;['cover.finestra_4'];cover_device_class_area;;;;;2.880666644964004
+Chiudi finestra 4 sala.;chiudi finestra 4 sala;HassTurnOff;['cover.finestra_4'];cover_device_class_area;;;;;1.9387251918345947
+apri porta uno camera 3;apri porta 1 camera 3;HassTurnOn;['cover.porta_1_3'];cover_device_class_area;;;;;1.366343659376775
+Chiude porta uno camera 3.;chiudi porta 1 camera 3;HassTurnOff;['cover.porta_1_3'];cover_device_class_area;;;;;0.561847302686967
+apri, scuro, uno, bagno, due.;apri scuro 1 bagno 2;HassTurnOn;['cover.scuro_1_5'];cover_device_class_area;;;;;2.988711656735597
+chiudi scuro uno bagno 2.;chiudi scuro 1 bagno 2;HassTurnOff;['cover.scuro_1_5'];cover_device_class_area;;;;;2.3019583720553864
+apri a finestra uno, bagno due.;apri finestra 1 bagno 2;HassTurnOn;['cover.finestra_1_5'];cover_device_class_area;;;;;2.6516249301508372
+accendi luce sala a 50%;accendi luce sala a 50%;HassLightSet;['light.luce_sala'];brightness_area;;;50.0;;2.4237638740126903
+aumenta luminosità luce sala a 25%;aumenta luminosità luce sala a 25%;HassLightSet;['light.luce_sala'];brightness_area;;;25.0;;0.7454451089126913
+abbassa intensità luce sala a 10%;abbassa intensità luce sala a 10%;HassLightSet;['light.luce_sala'];brightness_area;;;10.0;;1.1361643955772625
+Imposta luce sala a blue.;imposta luce sala a blu;HassLightSet;['light.luce_sala'];color_area;;Blu;;;1.6185194583460067
+Imposta luce, bagno, due, aggiallo.;imposta luce bagno 2 a giallo;HassLightSet;['light.luce_bagno_2'];color_area;;Giallo;;;1.9671138401187123
+Imposta luce camera 2 a rosso.;imposta luce camera 2 a rosso;HassLightSet;['light.luce_camera_2'];color_area;;Rosso;;;0.8184419153413356
+accendi condizionatore 3.;accendi condizionatore 3;HassTurnOn;['climate.condizionatore_3'];default;;;;;1.1849787659853805
+aumenta condizionatore 3 a 26 gradi;aumenta condizionatore 4 a 26 gradi;HassClimateSetTemperature;['climate.condizionatore_3'];default;;;;26.0;1.4476843914171431
+la bassa condizionatore due ha 25 gradi;abbassa condizionatore due a 25 gradi;HassClimateSetTemperature;['climate.condizionatore_2'];default;;;;25.0;2.5234422396923986
+aumenta temperatura, pavimento a 25 gradi.;aumenta temperatura pavimento a 25 gradi;HassClimateSetTemperature;['climate.pavimento'];default;;;;25.0;2.0686309048447757
+a bassa, temperatura pavimento a due gradi;abbassa temperatura pavimento a 2 gradi;HassClimateSetTemperature;['climate.pavimento'];default;;;;2.0;1.5582106176604154
+spegni pavimento;spegni pavimento;HassTurnOff;['climate.pavimento'];default;;;;;2.2523492807907886
+accendi tutte le luci;accendi tutte le luci;HassTurnOn;['light.luce_sala','light.luce_cucina','light.luce_tv','light.luce_bagno_1','light.luce_bagno_2','light.luce_camera_1','light.luce_camera_2','light.luce_camera_3','light.luce_balcone'];default;;;;;2.0715013171643344
+Spegnito Tele luci; spegni tutte le luci;HassTurnOff;['light.luce_sala','light.luce_cucina','light.luce_tv','light.luce_bagno_1','light.luce_bagno_2','light.luce_camera_1','light.luce_camera_2','light.luce_camera_3','light.luce_balcone'];default;;;;;2.811696970838116
+Quante luci sono acceze.;quante luci sono accese;HassGetState;['light.luce_sala','light.luce_cucina','light.luce_tv','light.luce_bagno_1','light.luce_bagno_2','light.luce_camera_1','light.luce_camera_2','light.luce_camera_3','light.luce_balcone'];how_many;on;;;;0.7095508555662695
+quali luti sono attese?;quali luci sono accese;HassGetState;['light.luce_sala','light.luce_cucina','light.luce_tv','light.luce_bagno_1','light.luce_bagno_2','light.luce_camera_1','light.luce_camera_2','light.luce_camera_3','light.luce_balcone'];which;on;;;;2.463727764956679
+e acceza la luce bagno 2;è accesa la luce bagno 2;HassGetState;['light.luce_bagno_2'];one_yesno;on;;;;1.8787398844301033
+qual è la temperatura del pavimento?;qual è la temperatura del pavimento;HassClimateGetTemperature;['climate.pavimento'];default;;;;;1.2289426342596577
+Qual è la temperatura condizionatore 3?;qual è la temperatura condizionatore 3;HassClimateGetTemperature;['climate.condizionatore_3'];default;;;;;2.013278946562324
+Imposta tutti i condizionatori a 26 gradi.;imposta tutti i condizionatori a 26 gradi;HassClimateSetTemperature;['climate.condizionatore_1','climate.condizionatore_2','climate.condizionatore_3','climate.condizionatore_sala'];default;;;;26.0;2.098490795352024
+accendi la telebisione!;accendi la televisione;HassTurnOn;['switch.televisione'];default;;;;;0.9194770993826904
+accendi stereo in vasca;accendi stereo in vasca;HassTurnOn;['switch.stereo'];default;;;;;0.9490279298143816
+Accendi i dromassaggio vasca.;accendi idromassaggio vasca;HassTurnOn;['switch.idromassaggio'];default;;;;;2.6670795863996166

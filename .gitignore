@@ -13,6 +13,7 @@ homeassistant/components/*/translations
 
 homeassistant/components/converso_assistant/intent_recognition/datasets
 homeassistant/components/converso_assistant/intent_recognition/trained_models
+homeassistant/components/conversation/experiment_datasets/*_test.csv
 homeassistant/components/converso_assistant/intent_recognition/new_datasets
 homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.csv
 homeassistant/components/converso_assistant/intent_recognition/new_trained_models/*.joblib

@@ -1,0 +1,74 @@
+OutputText;Text;Intent;MatchedEntities;Response;State;Color;Brightness;Temperature;Delay
+accendi luce cucina; accendi luce cucina;HassTurnOn;['light.luce_cucina'];lights_area;;;;;0.9934095369988014
+spenni lute cucina; spegni luce cucina;HassTurnOff;['light.luce_cucina'];lights_area;;;;;0.696166058740642
+accendi luce corridolio; accendi luce corridoio;HassTurnOn;['light.luce_corridoio'];lights_area;;;;;2.6219569053286076
+Speni luce con ridoio; spegni luce corridoio;HassTurnOff;['light.luce_corridoio'];lights_area;;;;;0.7370928060948632
+accendi luce in camera; accendi luce in camera;HassTurnOn;['light.luce_maria','light.luce_rodolfo'];lights_area;;;;;2.2928481549495237
+spenni luce in camera; spegni luce in camera;HassTurnOff;['light.luce_maria','light.luce_rodolfo'];lights_area;;;;;2.6483026235550766
+accendi bagno; accendi il bagno;HassTurnOn;['light.luce_bagno'];lights_area;;;;;0.5294619932605398
+accendi luce in bagno; accendi luce in bagno;HassTurnOn;['light.luce_bagno'];lights_area;;;;;1.0239436921302485
+spini luce in bagno; spegni luce in bagno;HassTurnOff;['light.luce_bagno'];lights_area;;;;;1.608352678777884
+accendimenti ventilatorre nella camera; accendi il ventilatore nella camera;HassTurnOn;['fan.ventilatore_camera'];fans_area;;;;;2.3679379779181087
+spiegni il ventilatore nella camera; spegni il ventilatore nella camera;HassTurnOff;['fan.ventilatore_camera'];fans_area;;;;;1.01146613047082
+in posta luminosità cucina 75%; imposta luminosità cucina a 75%;HassLightSet;['light.luce_cucina'];brightness_area;;;75.0;;0.9050101929834865
+Imposta luminosità a corridoio 50%.; imposta luminosità corridoio a 50%;HassLightSet;['light.luce_corridoio'];brightness_area;;;50.0;;0.9553951455888747
+Imposta luminosità camera a 100%.; imposta luminosità camera a 100%;HassLightSet;['light.luce_camera'];brightness_area;;;100.0;;0.7178886266693852
+metti in bagno la luminosità all'80%; metti in bagno la luminosità all'80%;HassLightSet;['light.luce_bagno'];brightness_area;;;80.0;;0.8034966289150887
+Impostate in temperatura del condizionatore a 26°C e mezzo; imposta la temperatura del condizionatore a 26°C e mezzo;HassClimateSetTemperature;['climate.condizionatore'];default;;;;26.5;0.8601593628034022
+accendi luce balcona; accendi luce balcone;HassTurnOn;['light.luce_balcone'];lights_area;;;;;2.6416778602502076
+spenni luce balkona; spegni luce balcone;HassTurnOff;['light.luce_balcone'];lights_area;;;;;1.0654801770419706
+Imposta temperatura termosifone a 21 gradi.;imposta temperatura termosifone a 21 gradi;HassClimateSetTemperature;['climate.termosifone_camera','climate.termosifone_cucina','climate.termosifone_corridoio','climate.termosifone_bagno'];default;;;21.0;;1.1254571453711164
+Imposta Balvola termostratica a 19 gradi e mezzo; imposta valvola termostatica a 19 gradi e mezzo;HassClimateSetTemperature;['climate.termosifone_camera','climate.termosifone_cucina','climate.termosifone_corridoio','climate.termosifone_bagno'];default;;;19.5;;0.6481892630581405
+Imposta riscaldamento in bagno a 19 gradi.; imposta riscaldamento in bagno a 19 gradi;HassClimateSetTemperature;['climate.termosifone_bagno'];default;;;19.0;;1.7025682132130597
+accendi luce a studio; accendi luce studio;HassTurnOn;['light.luce_studio'];lights_area;;;;;1.991350346773193
+Spenne lucia studio; spegni luce studio;HassTurnOff;['light.luce_studio'];lights_area;;;;;1.596495633502196
+imposto a luce verde in cucina; imposta luce verde in cucina;HassLightSet;['light.luce_cucina'];color_area;;Verde;;;2.094606198044968
+metti luce blu in camera; metti luce blu in camera;HassLightSet;['light.luce_maria','light.luce_rodolfo'];color_area;;Blu;;;0.6653828706987457
+metti il luce gialla in corridoio; metti luce gialla in corridoio;HassLightSet;['light.luce_corridoio'];color_area;;Giallo;;;2.25485899593734
+metti luce a rancione in balkona; metti luce arancione in balcone;HassLightSet;['light.luce_balcone'];color_area;;Arancione;;;1.739519549345768
+un po' a saluto luce bianca in bagno; accendi luce bianca in bagno;HassLightSet;['light.luce_bagno'];color_area;;Bianco;;;2.3919381936173916
+apri fin a strè in bagno; apri finestra in bagno;HassTurnOn;['cover.finestra_bagno'];cover_device_class_area;;;;;2.352851078026882
+più di finestra in bagno; chiudi finestra in bagno;HassTurnOff;['cover.finestra_bagno'];cover_device_class_area;;;;;2.390036189318557
+Apri finestre in camera; apri finestre in camera;HassTurnOn;['cover.finestra_camera'];cover_device_class_area;;;;;1.3621983425739608
+Chiudi finestre in camera.; chiudi finestre in camera;HassTurnOff;['cover.finestra_camera'];cover_device_class_area;;;;;2.3053947501511773
+apri finestra cucino; apri finestra cucina;HassTurnOn;['cover.finestra_cucina'];cover_device_class_area;;;;;1.2217164359229247
+chiudi finestra cucina; chiudi finestra cucina;HassTurnOff;['cover.finestra_cucina'];cover_device_class_area;;;;;1.2720371175579417
+Alza tende da sole; alza tende da sole;HassTurnOn;['tenda_sole'];cover_device_class;;;;;2.042748583018922
+chiudi tende da sole; chiudi tenda da sole;HassTurnOff;['tenda_sole'];cover_device_class;;;;;2.438795533006906
+la finessa in bagno aperta; la finestra in bagno è aperta;HassGetState;['cover.finestra_bagno'];one_yesno;on;;;;1.6106782630444012
+la finestre in bano e chiusa; la finestra in bagno è chiusa;HassGetState;['cover.finestra_bagno'];one_yesno;off;;;;2.092542756850761
+come le finestre in camera sono aperte; le finestre in camera sono aperte;HassGetState;['cover.finestra_camera'];one_yesno;on;;;;0.6516963943918187
+le finestre in camera sono chiuse; le finestre in camera sono aperte;HassGetState;['cover.finestra_camera'];one_yesno;on;;;;1.62988071787696
+la finestra in cucine aperta; la finestra in cucina è aperta;HassGetState;['cover.finestra_cucina'];one_yesno;on;;;;1.8896230425453364
+La finestra in cucina è chiusa; la finestra in cucina è chiusa;HassGetState;['cover.finestra_cucina'];one_yesno;off;;;;2.82811493842938
+Quante finestre sono aperte?; quante finestre sono aperte?;HassGetState;['cover.finestra_cucina','finestra_camera','finestra_bagno'];how_many;on;;;;2.6695889552106857
+Quante fine estresse sono accuser?; quante finestre sono chiuse?;HassGetState;['cover.finestra_cucina','finestra_camera','finestra_bagno'];how_many;off;;;;0.7512830327196192
+quali finestre sono aperte?; quali finestre sono aperte?;HassGetState;['cover.finestra_cucina','finestra_camera','finestra_bagno'];which;on;;;;2.245798583528604
+quali finestre sono chiusi?; quali finestre sono chiuse?;HassGetState;['cover.finestra_cucina','finestra_camera','finestra_bagno'];which;off;;;;0.9959719107933112
+la luce in bano e acessa; la luce in bagno è accesa?;HassGetState;['light.luce_bagno'];one_yesno;on;;;;2.2957565911460946
+quante luci sono accese camera; quante luci sono accese in camera;HassGetState;['light.luce_maria','light.luce_rodolfo'];how_many;on;;;;2.7590836608659632
+c'è una luce acceza in balcona; c'è una luce accesa in balcone;HassGetState;['light.luce_balcone'];any;on;;;;2.431825091716262
+qual è la temperatura in cucina?; qual è la temperatura in cucina?;HassClimateGetTemperature;['climate.termosifone_cucina'];default;;;;;2.6487740163902393
+qual è la temperatura in camera?; qual è la temperatura in camera?;HassClimateGetTemperature;['climate.termosifone_camera'];default;;;;;0.9989163046347866
+qual è la temperatura in bagno?; qual è la temperatura in bagno?;HassClimateGetTemperature;['climate.termosifone_bagno'];default;;;;;2.7182078482729533
+Quanti gradici sono in corridoio?; quanti gradi ci sono in corridoio?;HassClimateGetTemperature;['climate.termosifone_corridoio'];default;;;;;1.925151159284201
+accendi la lavatrice; accendi la lavatrice;HassTurnOn;['switch.lavatrice'];default;;;;;0.7886071690276091
+spennie la lavatrice; spegni la lavatrice;HassTurnOff;['switch.lavatrice'];default;;;;;1.4113609246080254
+accendi la tv; accendi la tv;HassTurnOn;['switch.tv'];default;;;;;0.8522710246218232
+spenni la tv; spegni la tv;HassTurnOff;['switch.tv'];default;;;;;2.45479286481216
+accende il forno; accendi il forno;HassTurnOn;['switch.forno'];default;;;;;1.7867438472617732
+speni il forno; spegni il forno;HassTurnOff;['switch.forno'];default;;;;;1.9163916767438098
+accendi tutte le luci; accendi tutte le luci;HassTurnOn;['light.luce_maria','light.luce_rodolfo','light.luce_corridoio','light.luce_bagno','light.luce_cucina','light.luce_balcone','light.luce_studio'];default;;;;;2.5966543109301616
+chiudi tutte le porte; chiudi tutte le porte;HassTurnOff;['cover.porta_ingresso,'cover.porta_studio'];cover_device_class;;;;;2.912052293190949
+Spegni la luce in cucina; spegni la luce in cucina;HassTurnOff;['light.luce_cucina'];lights_area;;;;;1.360595102747823
+Imposta la temperatura a 20°C.; imposta la temperatura a 20°C;HassClimateSetTemperature;['climate.termosifone_camera','climate.termosifone_cucina','climate.termosifone_corridoio','climate.termosifone_bagno'];default;;;20.0;;1.0485287241693746
+in posta, luge, viola e cucina; imposta luce viola in cucina;HassLightSet;['light.luce_cucina'];color_area;;Viola;;;1.0974421616550907
+azale tapparelle; alza le tapparelle;HassTurnOn;['cover.tapparella_camera','cover.tapparella_cucina'];cover_device_class;;;;;2.017686571176006
+Abbassa le taparella.;abbassa le tapparelle;HassTurnOff;['cover.tapparella_camera','cover.tapparella_cucina'];cover_device_class;;;;;1.0670878644299964
+abbassa la tapparella in cucina;abbassa la tapparella in cucina;HassTurnOff;['cover.tapparella_cucina'];cover_device_class_area;;;;;1.8871201903634967
+Quante tapparelle sono abberte.; quante tapparelle sono aperte;HassGetState;['cover.tapparella_camera','cover.tapparella_cucina'];how_many;on;;;;0.6972897667684306
+Quali tapparelle sono aperte.; quali tapparelle sono aperte;HassGetState;['cover.tapparella_camera,'cover.tapparella_cucina'];which;on;;;;1.4150326782755864
+c'è una taparella, chiusa; c'è una tapparella chiusa;HassGetState;['cover.tapparella_camera','cover.tapparella_cucina'];any;off;;;;0.6745294017200294
+Quanti ventilatori sono accesi?; quanti ventilatori sono accesi?;HassGetState;['fan.ventilatore'];how_many;on;;;;0.5409101369956644
+c'è un ventilatore aceso; c'è un ventilatore acceso;HassGetState;['fan.ventilatore'];any;on;;;;0.5421728814896227
+quali condizionatori sono accesi?; quali condizionatori sono accesi?;HassGetState;['climate.condizionatore'];which;on;;;;2.7790424119830135

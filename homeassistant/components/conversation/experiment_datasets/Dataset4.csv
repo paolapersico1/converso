@@ -1,0 +1,76 @@
+OutputText;Text;Intent;MatchedEntities;Response;State;Color;Brightness;Temperature;Delay
+accendi luce, bagno;accendi luce bagno;HassTurnOn;['light.luce','light.luce_specchio'];lights_area;;;;;1.375429552948884
+accendi luce camera;accendi luce camera;HassTurnOn;['light.luce_1'];lights_area;;;;;2.07987167082175
+accendi luce corridoio;accendi luce corridoio;HassTurnOn;['light.luce_2'];lights_area;;;;;1.6324536986542144
+accendi luce in studio;accendi luce in studio;HassTurnOn;['light.luce_3'];lights_area;;;;;1.3876385611877382
+accendi luce cucina;accendi luce cucina;HassTurnOn;['light.luce_4'];lights_area;;;;;2.2408470929332136
+accendi luce salotto;accendi luce salotto;HassTurnOn;['light.luce_5'];lights_area;;;;;2.889646292743111
+Cendi luce, scabuzino;accendi luce sgabuzzino;HassTurnOn;['light.luce_6'];lights_area;;;;;2.485873349637836
+accendi luce garage;accendi luce garage;HassTurnOn;['light.luce_7'];lights_area;;;;;2.251787220523189
+speniluce bagno;spegni luce bagno;HassTurnOff;['light.luce','light.luce_specchio'];lights_area;;;;;2.488959365618019
+spenni luce, camera;spegni luce camera;HassTurnOff;['light.luce_1'];lights_area;;;;;1.6209681353195364
+Segni luce e accorri doio;spegni luce corridoio;HassTurnOff;['light.luce_2'];lights_area;;;;;2.4586150788769023
+spigni luce nel studio;spegni luce nello studio;HassTurnOff;['light.luce_3'];lights_area;;;;;1.4695498739741475
+spegni luce in cucina;spegni luce in cucina;HassTurnOff;['light.luce_4'];lights_area;;;;;2.5488421880452994
+spenni luce in salotto;spegni luce in salotto;HassTurnOff;['light.luce_5'];lights_area;;;;;2.0437447121937655
+Spegni luce in scabuzzino;Spegni luce in sgabuzzino;HassTurnOff;['light.luce_6'];lights_area;;;;;1.132230068816872
+spenni luce e in garage;spegni luce in garage;HassTurnOff;['light.luce_7'];lights_area;;;;;1.0384794473889811
+Imposta luminosità 25% in bagno.;Imposta luminosità 25% in bagno.;HassLightSet;['light.luce','light.luce_specchio'];brightness_area;;;25.0;;1.1985616007985163
+metti luminosità in camera al 80%;metti luminosità in camera all'80%;HassLightSet;['light.luce_1'];brightness_area;;;80.0;;1.768585656272718
+Impassa luminosità, corridoio, al 45%.;Impassa luminosità, corridoio, al 45%.;HassLightSet;['light.luce_2'];brightness_area;;;45.0;;0.5864863103063124
+Imposta luminosità al 70% nello studio.;Imposta luminosità al 70% nello studio;HassLightSet;['light.luce_3'];brightness_area;;;70.0;;1.500475124493731
+metti luminosità in cucina a 80%.;metti luminosità in cucina a 80%;HassLightSet;['light.luce_4'];brightness_area;;;80.0;;0.871921143698968
+Impossa luminosità in salotto a 65%;imposta luminosità in salotto a 65%;HassLightSet;['light.luce_5'];brightness_area;;;65.0;;1.895569779156717
+metti luminosità in scabuzino al 40%.;metti luminosità nello sgabuzzino al 40%;HassLightSet;['light.luce_6'];brightness_area;;;40.0;;0.548211718678216
+alluminosità garage al 85%;imposta luminosità garage all'85%;HassLightSet;['light.luce_7'];brightness_area;;;85.0;;2.32875566122081
+metti in bagno lucerossa;metti in bagno luce rossa;HassLightSet;['light.luce','light.luce_specchio'];color_area;;Rosso;;;2.581513489550834
+imposta in camera in.. in lucia e in blue...;imposta in camera da letto una luce blu;HassLightSet;['light.luce_1'];color_area;;Blu;;;0.6257173425567737
+metti in corridoglio una luce arancione;metti in corridoio una luce arancione;HassLightSet;['light.luce_2'];color_area;;Arancione;;;1.8010325857536729
+imposta nel studio una luce verde.;imposta nello studio una luce verde;HassLightSet;['light.luce_3'];color_area;;Verde;;;1.0867040146920806
+imposta in cucina una luce viola;imposta in cucina una luce viola;HassLightSet;['light.luce_4'];color_area;;Viola;;;2.889095324460832
+insalotto una luce rossa; metti in salotto una luce rossa;HassLightSet;['light.luce_5'];color_area;;Rosso;;;0.6258624468900928
+metti nello sgabuzzino, una nuce dianca.;metti nello sgabuzzino una luce bianca;HassLightSet;['light.luce_6'];color_area;;Bianco;;;1.9841163538400728
+imposta in gragi, una luce.;imposta in garage una luce bianca;HassLightSet;['light.luce_7'];color_area;;Bianco;;;0.929142334455954
+Imposta condizionatore in camera da netto a 25 gradi.;imposta condizionatore in camera da netto a 25 gradi;HassClimateSetTemperature;['climate.condizionatore'];default;;;;25.0;2.340889224129486
+accenti condizionatore impostato su 24 gradi nello studio.;accendi condizionatore impostato su 24 gradi nello studio.;HassClimateSetTemperature;['climate.condizionatore_1'];default;;;;24.0;1.8211810250458718
+in bosta condizionatore il salotto a 27.;imposta condizionatore in salotto a 27 gradi;HassClimateSetTemperature;['climate.condizionatore_2'];default;;;;27.0;2.5875838937021407
+che in temperatura c'è in camera;che temperature c'è in camera;HassClimateGetTemperature;['climate.condizionatore'];default;;;;;2.6991279385044233
+che temperatura c'è in studio?;che temperature c'è nello studio;HassClimateGetTemperature;['climate.condizionatore_1'];default;;;;;0.7506640059421041
+in salotto che temperatura c'è?;in salotto che temperatura c'è?;HassClimateGetTemperature;['climate.condizionatore_2'];default;;;;;1.2580631382519607
+In bagno io chiesa la luce.;in bagno è accesa la luce;HassGetState;['light.luce','light.luce_specchio'];one_yesno;on;;;;2.339543727223393
+ci sono delle luci accese in camera;ci sono delle luci accese in camera;HassGetState;['light.luce_1'];any;on;;;;2.701228930774442
+C'è la luce in lo studio, acesa!;c'è la luce nello studio accesa;HassGetState;['light.luce_3'];one_yesno;on;;;;2.814513193695559
+Incorrido io la luce espenta.;in corridoio la luce è spenta;HassGetState;[''light.luce_2];one_yesno;off;;;;1.2286750101917114
+sono accensi le luci in cucina;sono accese le luci in cucina;HassGetState;['light.luce_4'];all;on;;;;2.723550034110413
+sono spente le luce in salotto;sono spente le luci in salotto;HassGetState;['light.luce_5'];all;off;;;;2.170596966476024
+C'è qualcosa di acceso nello scabazzino?;c'è qualcosa di acceso nello sgabuzzino?;HassGetState;['light.luce_6'];any;on;;;;2.295027182109502
+le luci in garage sono acceze;le luci in garage sono accese;HassGetState;['light.luce_7'];all;on;;;;1.49341875428571
+ci sono delle luci acceze in casa;ci sono delle luci accese in casa;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];any;on;;;;0.9970184019270318
+Quante luci sono acceze in casa?;quante luci sono accese in casa?;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];how_many;on;;;;2.13474983319984
+ci sono delle luce spente in casa;ci sono delle luci spente in casa;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];any;off;;;;0.5612409303124789
+Quante luci sono accese in casa?;quante luci sono accese in casa;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];how_many;on;;;;1.6723832975363617
+Quelli luci in casa sono acceze?;quali luci in casa sono accese;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];which;on;;;;2.834117657480748
+quali luci sono spente?;quali luci sono spente?;HassGetState;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];which;off;;;;2.3530314303808897
+c'è qualche finestra aperta;c'è qualche finestra aperta;HassGetState;['cover.finestra_1','cover.finestra_2','cover.finestra_3'];any;on;;;;2.9853584733005194
+le finestre sono i acchiuse;le finestre sono chiuse;HassGetState;['cover.finestra_1','cover.finestra_2','cover.finestra_3'];all;off;;;;2.666309551905491
+La porta fine è strin salotto e aperta;la porta finestra in salotto è aperta;HassGetState;['cover.porta_finestra_1'];one_yesno;on;;; ;2.2364143602386086
+ci sono delle porte aperte;ci sono delle porte aperte;HassGetState;['cover.porta_finestra','cover.porta_finestra_1','cover.porta_ingresso'];any;on;;;;2.939109847630137
+quelli parte sono chuse;quali porte sono chiuse;HassGetState;['cover.porta_finestra','cover.porta_finestra_1','cover.porta_ingresso'];which;off;;;;1.0300986347094434
+in cucina la porta è aperta;in cucina la porta è aperta;HassGetState;['cover.porta_finestra'];one_yesno;on;;;;0.6919612768225487
+La porta di casa è chiusa;la porta di casa è chiusa;HassGetState;['cover.porta_ingresso'];one_yesno;off;;;;0.5314323118631656
+Le finesre sono aperte.;le finestre sono aperte;HassGetState;['cover.finestra_1','cover.finestra_2','cover.finestra_3'];all;on;;;;2.4023996023599414
+La porta principale è chiusa.;la porta principale è chiusa;HassGetState;['cover.porta_ingresso'];one_yesno;off;;;;2.0518474794809207
+Adapri finestra in boguo;apri finestra in bagno;HassTurnOn;['cover.finestra_1'];cover_device_class_area;;;;;2.0966261337945746
+chiudi i finestri in camera;chiudi finestra in camera;HassTurnOff;['cover.finestra_2'];cover_device_class_area;;;;;2.770884457956153
+chiudi finestra cucino;chiudi finestra cucina;HassTurnOff;['cover.finestra_3'];cover_device_class_area;;;;;1.087157588233863
+a prima volta grage;apri porta garage;HassTurnOn;['cover.aprigarage'];cover_device_class_area;;;;;1.103604879287353
+accendi luce bagno;accendi luce bagno;HassTurnOn;['light.luce','light.luce_specchio'];lights_area;;;;;2.5487406253311304
+Cendi, luce, corridoio!;accendi luce corridoio;HassTurnOn;['light.luce_2'];lights_area;;;;;2.370816468974339
+speni luce studio;spegni luce studio;HassTurnOff;['light.luce_3'];lights_area;;;;;2.2265470818361814
+spiegni tu te le luci;spegni tutte le luci;HassTurnOff;['light.luce','light.luce_specchio','light.luce_1','light.luce_2','light.luce_3','light.luce_4','light.luce_5','light.luce_6','light.luce_7'];default;;;;;2.177261886879169
+attendi il condizionatore nell'ostrudiole;accendi il condizionatore nello studiolo;HassTurnOn;['fan.condizionatore_1'];default;;;;;2.933615264582621
+spenì il condizionatore in salotto.;spegni il condizionatore in salotto;HassTurnOff;['fan.condizionatore_2'];default;;;;;0.7173454776437591
+accendi la televisione.;accendi la televisione;HassTurnOn;['switch.tv'];default;;;;;2.0761820170534953
+spegni la televisione;spegni la televisione;HassTurnOff;['switch.tv'];default;;;;;1.8472459003177606
+in interisci la temperatura a 26° in camera;inserisci la temperatura a 26° in camera;HassClimateSetTemperature;['climate.condizionatore'];default;;;;26.0;2.4762061142374963
+Imposta luce blu nel scudio.;imposta luce blu nello studio;HassLightSet;['light.luce_3'];color_area;;Blu;;;2.029648448212532
